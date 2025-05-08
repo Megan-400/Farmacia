@@ -1,8 +1,11 @@
 package interfaz;
 
+import dao.VendedorDAO;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.JOptionPane;
+import modelo.Vendedor;
+import conexion.Conexion;
 
 /**
  *
@@ -10,17 +13,23 @@ import javax.swing.JOptionPane;
  */
 public class vtnIngreso extends javax.swing.JFrame
 {
-
-    /**
-     * Creates new form vtnIngreso
-     */
+    private Conexion conexion;
+    
     public vtnIngreso()
     {
         initComponents();
-        this.setLocationRelativeTo(null);
+        this.setLocationRelativeTo(null);        
     }
-
-    public static int tipoUsuario = 1;
+    
+    /**
+     * Creates new form vtnIngreso
+     */
+    public vtnIngreso(Conexion conexion)
+    {
+        initComponents();
+        this.setLocationRelativeTo(null);
+        this.conexion = conexion;
+    }    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -34,12 +43,11 @@ public class vtnIngreso extends javax.swing.JFrame
 
         jPanel1 = new javax.swing.JPanel();
         txtUsuario = new javax.swing.JTextField();
-        txtContraseña = new javax.swing.JTextField();
-        jRadioButton1 = new javax.swing.JRadioButton();
-        jRadioButton2 = new javax.swing.JRadioButton();
+        txtContrasenia = new javax.swing.JPasswordField();
         btnIngresar = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
+        mostrarCB = new javax.swing.JCheckBox();
         jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -53,38 +61,8 @@ public class vtnIngreso extends javax.swing.JFrame
                 txtUsuarioActionPerformed(evt);
             }
         });
-        jPanel1.add(txtUsuario, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 230, 230, 30));
-
-        txtContraseña.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                txtContraseñaActionPerformed(evt);
-            }
-        });
-        jPanel1.add(txtContraseña, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 280, 230, 30));
-
-        jRadioButton1.setFont(new java.awt.Font("Arial", 0, 24)); // NOI18N
-        jRadioButton1.setText("Ventas");
-        jRadioButton1.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                jRadioButton1ActionPerformed(evt);
-            }
-        });
-        jPanel1.add(jRadioButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 180, -1, -1));
-
-        jRadioButton2.setFont(new java.awt.Font("Arial", 0, 24)); // NOI18N
-        jRadioButton2.setText("Administrador");
-        jRadioButton2.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                jRadioButton2ActionPerformed(evt);
-            }
-        });
-        jPanel1.add(jRadioButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 180, -1, -1));
+        jPanel1.add(txtUsuario, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 140, 230, 30));
+        jPanel1.add(txtContrasenia, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 190, 230, 30));
 
         btnIngresar.setFont(new java.awt.Font("Arial", 0, 24)); // NOI18N
         btnIngresar.setText("Ingresar");
@@ -95,18 +73,28 @@ public class vtnIngreso extends javax.swing.JFrame
                 btnIngresarActionPerformed(evt);
             }
         });
-        jPanel1.add(btnIngresar, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 340, 120, 40));
+        jPanel1.add(btnIngresar, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 270, 120, 40));
 
         jLabel2.setFont(new java.awt.Font("Arial", 0, 24)); // NOI18N
         jLabel2.setText("Usuario");
-        jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 230, -1, 20));
+        jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 140, -1, 20));
 
         jLabel3.setFont(new java.awt.Font("Arial", 0, 24)); // NOI18N
         jLabel3.setText("Contraseña");
-        jPanel1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 280, -1, -1));
+        jPanel1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 190, -1, -1));
+
+        mostrarCB.setText("Mostrar contraseña");
+        mostrarCB.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                mostrarCBActionPerformed(evt);
+            }
+        });
+        jPanel1.add(mostrarCB, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 230, -1, -1));
 
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/Usuario.png"))); // NOI18N
-        jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 450, 430));
+        jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 450, 340));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -127,59 +115,34 @@ public class vtnIngreso extends javax.swing.JFrame
         // TODO add your handling code here:
     }//GEN-LAST:event_txtUsuarioActionPerformed
 
-    private void txtContraseñaActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_txtContraseñaActionPerformed
-    {//GEN-HEADEREND:event_txtContraseñaActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtContraseñaActionPerformed
-
     private void btnIngresarActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnIngresarActionPerformed
     {//GEN-HEADEREND:event_btnIngresarActionPerformed
-        if (txtUsuario.getText().trim().isEmpty() || txtContraseña.getText().trim().isEmpty())
+        String usuario = txtUsuario.getText();
+        String contrasenia = new String(txtContrasenia.getPassword());
+              
+        Vendedor vendedor = VendedorDAO.inicioSesion(usuario, contrasenia);
+        
+        if (vendedor != null)
         {
-            JOptionPane.showMessageDialog(vtnIngreso.this, "Hay campos vacios", "Faltan datos", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Bienvenido " + vendedor.getNombre());
+            this.dispose();
+            new vtnPrincipal(vendedor).setVisible(true);
         } else
         {
-            String usuario = txtUsuario.getText();
-            String contraseña = txtContraseña.getText();
-
-            String exRUsuario = "[a-zA-Z0-9]{10}";
-            String exRContraseña = "[0-9a-z]{6}";
-
-            Pattern pattUsuario = Pattern.compile(exRUsuario);
-            Matcher matchUsuario = pattUsuario.matcher(usuario);
-            Pattern pattContraseña = Pattern.compile(exRContraseña);
-            Matcher matchContraseña = pattContraseña.matcher(contraseña);
-
-            boolean valUsuario = matchUsuario.matches();
-            boolean valContraseña = matchContraseña.matches();
-
-            if (!valUsuario && !valContraseña)
-            {
-                JOptionPane.showMessageDialog(vtnIngreso.this, "El usuario y/o la contraseña son incorrectos", "Usuario y/o contraseña incorrectos", JOptionPane.WARNING_MESSAGE);
-            } else
-            {
-                if (jRadioButton1.isSelected() || jRadioButton2.isSelected())
-                {
-                    tipoUsuario = (jRadioButton1.isSelected()) ? 1 : 0;
-                    vtnIngreso.this.dispose();
-                    new vtnPrincipal().setVisible(true);
-                } else
-                {
-                    JOptionPane.showMessageDialog(vtnIngreso.this, "Seleccione el tipo de usuario", "Faltan Tipo Usuario", JOptionPane.WARNING_MESSAGE);
-                }
-            }
+            JOptionPane.showMessageDialog(this, "Credenciales Invalidas", "Erro", JOptionPane.WARNING_MESSAGE);
         }
     }//GEN-LAST:event_btnIngresarActionPerformed
 
-    private void jRadioButton2ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jRadioButton2ActionPerformed
-    {//GEN-HEADEREND:event_jRadioButton2ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jRadioButton2ActionPerformed
-
-    private void jRadioButton1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jRadioButton1ActionPerformed
-    {//GEN-HEADEREND:event_jRadioButton1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jRadioButton1ActionPerformed
+    private void mostrarCBActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_mostrarCBActionPerformed
+    {//GEN-HEADEREND:event_mostrarCBActionPerformed
+        if (mostrarCB.isSelected())
+        {
+            txtContrasenia.setEchoChar((char) 0);            
+        } else
+        {
+            txtContrasenia.setEchoChar('•');
+        }
+    }//GEN-LAST:event_mostrarCBActionPerformed
 
     /**
      * @param args the command line arguments
@@ -232,9 +195,8 @@ public class vtnIngreso extends javax.swing.JFrame
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JRadioButton jRadioButton1;
-    private javax.swing.JRadioButton jRadioButton2;
-    private javax.swing.JTextField txtContraseña;
+    private javax.swing.JCheckBox mostrarCB;
+    private javax.swing.JPasswordField txtContrasenia;
     private javax.swing.JTextField txtUsuario;
     // End of variables declaration//GEN-END:variables
 }

@@ -1,10 +1,19 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JInternalFrame.java to edit this template
- */
 package interfaz;
 
+import dao.ClienteDAO;
+import dao.ProductoDAO;
+import dao.VentasDAO;
+import java.sql.Connection;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import modelo.Cliente;
+import modelo.Detalle_Venta;
+import modelo.Metodo_Pago;
+import modelo.Producto;
+import modelo.Vendedor;
+import modelo.Ventas;
 
 /**
  *
@@ -13,6 +22,8 @@ import javax.swing.JOptionPane;
 public class frameVentas extends javax.swing.JInternalFrame
 {
 
+    private Vendedor vendedorActual;
+
     /**
      * Creates new form frameVentas
      */
@@ -20,6 +31,19 @@ public class frameVentas extends javax.swing.JInternalFrame
     {
         initComponents();
     }
+
+    public frameVentas(Vendedor vendedorActual)
+    {
+        initComponents();
+        this.vendedorActual = vendedorActual;
+    }
+
+    public int getIdVendedorActual()
+    {
+        return vendedorActual.getId_vendedor();
+    }
+
+    Producto productoSeleccionado = new Producto();
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -33,31 +57,33 @@ public class frameVentas extends javax.swing.JInternalFrame
 
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
+        buscarProBtn = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
-        jButton2 = new javax.swing.JButton();
+        agregarBtn = new javax.swing.JButton();
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
-        jCheckBox1 = new javax.swing.JCheckBox();
-        jCheckBox2 = new javax.swing.JCheckBox();
-        jTextArea1 = new javax.swing.JTextArea();
-        jButton3 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
-        cliente = new javax.swing.JTextField();
-        jTextArea3 = new javax.swing.JTextArea();
-        jTextArea4 = new javax.swing.JTextArea();
-        clave = new javax.swing.JTextField();
+        tableVenta = new javax.swing.JTable();
+        efectivoCB = new javax.swing.JCheckBox();
+        tarjetaCB = new javax.swing.JCheckBox();
+        txtPrecio = new javax.swing.JTextArea();
+        pagarBtn1 = new javax.swing.JButton();
+        pagarBtn = new javax.swing.JButton();
+        buscarCliBtn = new javax.swing.JButton();
+        txtCliente = new javax.swing.JTextField();
+        txtDescuento = new javax.swing.JTextArea();
+        txtCantidad = new javax.swing.JTextArea();
+        txtClave = new javax.swing.JTextField();
         jLabel8 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
-        jTextArea5 = new javax.swing.JTextArea();
-        jTextArea6 = new javax.swing.JTextArea();
-        jTextArea7 = new javax.swing.JTextArea();
-        jTextArea8 = new javax.swing.JTextArea();
+        txtTotal = new javax.swing.JTextArea();
+        txtNombre = new javax.swing.JTextArea();
+        txtSubtotal = new javax.swing.JTextArea();
+        txtIVA = new javax.swing.JTextArea();
+        txtNombreCliente = new javax.swing.JTextField();
         jLabel11 = new javax.swing.JLabel();
 
         setBackground(new java.awt.Color(255, 255, 255));
@@ -75,17 +101,17 @@ public class frameVentas extends javax.swing.JInternalFrame
         jLabel2.setText("Nombre:");
         getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 90, -1, -1));
 
-        jButton1.setBackground(new java.awt.Color(51, 255, 51));
-        jButton1.setFont(new java.awt.Font("Georgia", 0, 18)); // NOI18N
-        jButton1.setText("Buscar");
-        jButton1.addActionListener(new java.awt.event.ActionListener()
+        buscarProBtn.setBackground(new java.awt.Color(51, 255, 51));
+        buscarProBtn.setFont(new java.awt.Font("Georgia", 0, 18)); // NOI18N
+        buscarProBtn.setText("Buscar");
+        buscarProBtn.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
             {
-                jButton1ActionPerformed(evt);
+                buscarProBtnActionPerformed(evt);
             }
         });
-        getContentPane().add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 50, -1, -1));
+        getContentPane().add(buscarProBtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 50, -1, -1));
 
         jLabel3.setFont(new java.awt.Font("Georgia", 0, 18)); // NOI18N
         jLabel3.setText("Precio:");
@@ -99,142 +125,165 @@ public class frameVentas extends javax.swing.JInternalFrame
         jLabel5.setText("Cantidad:");
         getContentPane().add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 270, -1, -1));
 
-        jButton2.setBackground(new java.awt.Color(51, 255, 51));
-        jButton2.setFont(new java.awt.Font("Georgia", 0, 18)); // NOI18N
-        jButton2.setText("Agregar");
-        jButton2.addActionListener(new java.awt.event.ActionListener()
+        agregarBtn.setBackground(new java.awt.Color(51, 255, 51));
+        agregarBtn.setFont(new java.awt.Font("Georgia", 0, 18)); // NOI18N
+        agregarBtn.setText("Agregar");
+        agregarBtn.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
             {
-                jButton2ActionPerformed(evt);
+                agregarBtnActionPerformed(evt);
             }
         });
-        getContentPane().add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 340, -1, -1));
+        getContentPane().add(agregarBtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 340, -1, -1));
 
         jLabel6.setFont(new java.awt.Font("Georgia", 0, 18)); // NOI18N
         jLabel6.setText("No. Cliente:");
-        getContentPane().add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 20, -1, -1));
+        getContentPane().add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 30, -1, -1));
 
         jLabel7.setFont(new java.awt.Font("Georgia", 0, 18)); // NOI18N
         jLabel7.setText("Venta:");
         getContentPane().add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 80, -1, -1));
 
-        jTable1.setFont(new java.awt.Font("Georgia", 0, 16)); // NOI18N
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tableVenta.setFont(new java.awt.Font("Georgia", 0, 16)); // NOI18N
+        tableVenta.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][]
             {
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null}
+
             },
             new String []
             {
-                "Nombre", "Precio", "Cantidad", "Descuento", "Subtotal"
+                "Clave", "Nombre", "Precio", "Cantidad", "Descuento", "Subtotal"
             }
-        ));
-        jScrollPane1.setViewportView(jTable1);
+        )
+        {
+            boolean[] canEdit = new boolean []
+            {
+                false, false, false, false, false, false
+            };
 
-        getContentPane().add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 100, 420, 260));
+            public boolean isCellEditable(int rowIndex, int columnIndex)
+            {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane1.setViewportView(tableVenta);
 
-        jCheckBox1.setFont(new java.awt.Font("Georgia", 0, 18)); // NOI18N
-        jCheckBox1.setText("Efectivo");
-        getContentPane().add(jCheckBox1, new org.netbeans.lib.awtextra.AbsoluteConstraints(560, 380, -1, -1));
+        getContentPane().add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 110, 420, 260));
 
-        jCheckBox2.setFont(new java.awt.Font("Georgia", 0, 18)); // NOI18N
-        jCheckBox2.setText("Tarjeta");
-        getContentPane().add(jCheckBox2, new org.netbeans.lib.awtextra.AbsoluteConstraints(560, 410, -1, -1));
+        efectivoCB.setFont(new java.awt.Font("Georgia", 0, 18)); // NOI18N
+        efectivoCB.setText("Efectivo");
+        getContentPane().add(efectivoCB, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 380, -1, -1));
 
-        jTextArea1.setColumns(20);
-        jTextArea1.setFont(new java.awt.Font("Georgia", 0, 16)); // NOI18N
-        jTextArea1.setRows(5);
-        getContentPane().add(jTextArea1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 170, 160, 27));
+        tarjetaCB.setFont(new java.awt.Font("Georgia", 0, 18)); // NOI18N
+        tarjetaCB.setText("Tarjeta");
+        getContentPane().add(tarjetaCB, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 410, -1, -1));
 
-        jButton3.setBackground(new java.awt.Color(51, 255, 51));
-        jButton3.setFont(new java.awt.Font("Georgia", 0, 18)); // NOI18N
-        jButton3.setText("Pagar");
-        jButton3.addActionListener(new java.awt.event.ActionListener()
+        txtPrecio.setColumns(20);
+        txtPrecio.setFont(new java.awt.Font("Georgia", 0, 16)); // NOI18N
+        txtPrecio.setRows(5);
+        getContentPane().add(txtPrecio, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 170, 160, 27));
+
+        pagarBtn1.setBackground(new java.awt.Color(255, 51, 51));
+        pagarBtn1.setFont(new java.awt.Font("Georgia", 0, 18)); // NOI18N
+        pagarBtn1.setText("Cancelar");
+        pagarBtn1.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
             {
-                jButton3ActionPerformed(evt);
+                pagarBtn1ActionPerformed(evt);
             }
         });
-        getContentPane().add(jButton3, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 460, -1, -1));
+        getContentPane().add(pagarBtn1, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 460, 110, -1));
 
-        jButton4.setBackground(new java.awt.Color(51, 255, 51));
-        jButton4.setFont(new java.awt.Font("Georgia", 0, 18)); // NOI18N
-        jButton4.setText("Buscar");
-        jButton4.addActionListener(new java.awt.event.ActionListener()
+        pagarBtn.setBackground(new java.awt.Color(51, 255, 51));
+        pagarBtn.setFont(new java.awt.Font("Georgia", 0, 18)); // NOI18N
+        pagarBtn.setText("Pagar");
+        pagarBtn.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
             {
-                jButton4ActionPerformed(evt);
+                pagarBtnActionPerformed(evt);
             }
         });
-        getContentPane().add(jButton4, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 20, -1, -1));
+        getContentPane().add(pagarBtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(460, 460, -1, -1));
 
-        cliente.setFont(new java.awt.Font("Georgia", 0, 16)); // NOI18N
-        cliente.addActionListener(new java.awt.event.ActionListener()
+        buscarCliBtn.setBackground(new java.awt.Color(51, 255, 51));
+        buscarCliBtn.setFont(new java.awt.Font("Georgia", 0, 18)); // NOI18N
+        buscarCliBtn.setText("Buscar");
+        buscarCliBtn.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
             {
-                clienteActionPerformed(evt);
+                buscarCliBtnActionPerformed(evt);
             }
         });
-        getContentPane().add(cliente, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 20, 160, 28));
+        getContentPane().add(buscarCliBtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 20, -1, -1));
 
-        jTextArea3.setColumns(20);
-        jTextArea3.setFont(new java.awt.Font("Georgia", 0, 16)); // NOI18N
-        jTextArea3.setRows(5);
-        getContentPane().add(jTextArea3, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 230, 160, 27));
-
-        jTextArea4.setColumns(20);
-        jTextArea4.setFont(new java.awt.Font("Georgia", 0, 16)); // NOI18N
-        jTextArea4.setRows(5);
-        getContentPane().add(jTextArea4, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 290, 160, 27));
-
-        clave.setFont(new java.awt.Font("Georgia", 0, 16)); // NOI18N
-        clave.addActionListener(new java.awt.event.ActionListener()
+        txtCliente.setFont(new java.awt.Font("Georgia", 0, 16)); // NOI18N
+        txtCliente.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
             {
-                claveActionPerformed(evt);
+                txtClienteActionPerformed(evt);
             }
         });
-        getContentPane().add(clave, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 20, 160, 28));
+        getContentPane().add(txtCliente, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 20, 160, 30));
+
+        txtDescuento.setColumns(20);
+        txtDescuento.setFont(new java.awt.Font("Georgia", 0, 16)); // NOI18N
+        txtDescuento.setRows(5);
+        getContentPane().add(txtDescuento, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 230, 160, 27));
+
+        txtCantidad.setColumns(20);
+        txtCantidad.setFont(new java.awt.Font("Georgia", 0, 16)); // NOI18N
+        txtCantidad.setRows(5);
+        getContentPane().add(txtCantidad, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 290, 160, 27));
+
+        txtClave.setFont(new java.awt.Font("Georgia", 0, 16)); // NOI18N
+        txtClave.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                txtClaveActionPerformed(evt);
+            }
+        });
+        getContentPane().add(txtClave, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 20, 160, 30));
 
         jLabel8.setFont(new java.awt.Font("Georgia", 0, 18)); // NOI18N
         jLabel8.setText("Subtotal:");
-        getContentPane().add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 390, -1, -1));
+        getContentPane().add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 390, -1, -1));
 
         jLabel9.setFont(new java.awt.Font("Georgia", 0, 18)); // NOI18N
-        jLabel9.setText("Descuento:");
-        getContentPane().add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 430, -1, -1));
+        jLabel9.setText(" IVA:");
+        getContentPane().add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 430, -1, -1));
 
         jLabel10.setFont(new java.awt.Font("Georgia", 0, 18)); // NOI18N
-        jLabel10.setText("Total:");
-        getContentPane().add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 470, -1, -1));
+        jLabel10.setText(" Total:");
+        getContentPane().add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 470, -1, -1));
 
-        jTextArea5.setColumns(20);
-        jTextArea5.setFont(new java.awt.Font("Georgia", 0, 16)); // NOI18N
-        jTextArea5.setRows(5);
-        getContentPane().add(jTextArea5, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 460, 100, 27));
+        txtTotal.setColumns(20);
+        txtTotal.setFont(new java.awt.Font("Georgia", 0, 16)); // NOI18N
+        txtTotal.setRows(5);
+        getContentPane().add(txtTotal, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 460, 100, 27));
 
-        jTextArea6.setColumns(20);
-        jTextArea6.setFont(new java.awt.Font("Georgia", 0, 16)); // NOI18N
-        jTextArea6.setRows(5);
-        getContentPane().add(jTextArea6, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 110, 160, 30));
+        txtNombre.setColumns(20);
+        txtNombre.setFont(new java.awt.Font("Georgia", 0, 16)); // NOI18N
+        txtNombre.setRows(5);
+        getContentPane().add(txtNombre, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 110, 160, 30));
 
-        jTextArea7.setColumns(20);
-        jTextArea7.setFont(new java.awt.Font("Georgia", 0, 16)); // NOI18N
-        jTextArea7.setRows(5);
-        getContentPane().add(jTextArea7, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 380, 100, 27));
+        txtSubtotal.setColumns(20);
+        txtSubtotal.setFont(new java.awt.Font("Georgia", 0, 16)); // NOI18N
+        txtSubtotal.setRows(5);
+        getContentPane().add(txtSubtotal, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 380, 100, 27));
 
-        jTextArea8.setColumns(20);
-        jTextArea8.setFont(new java.awt.Font("Georgia", 0, 16)); // NOI18N
-        jTextArea8.setRows(5);
-        getContentPane().add(jTextArea8, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 420, 100, 27));
+        txtIVA.setColumns(20);
+        txtIVA.setFont(new java.awt.Font("Georgia", 0, 16)); // NOI18N
+        txtIVA.setRows(5);
+        getContentPane().add(txtIVA, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 420, 100, 27));
+
+        txtNombreCliente.setFont(new java.awt.Font("Georgia", 0, 14)); // NOI18N
+        getContentPane().add(txtNombreCliente, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 60, 240, 30));
 
         jLabel11.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/Fondo.png"))); // NOI18N
         getContentPane().add(jLabel11, new org.netbeans.lib.awtextra.AbsoluteConstraints(-7, -4, 710, 540));
@@ -242,57 +291,242 @@ public class frameVentas extends javax.swing.JInternalFrame
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton2ActionPerformed
-    {//GEN-HEADEREND:event_jButton2ActionPerformed
-        JOptionPane.showMessageDialog(frameVentas.this, "Agregando...", "Agregar Medicamento", JOptionPane.INFORMATION_MESSAGE);
-    }//GEN-LAST:event_jButton2ActionPerformed
-
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton3ActionPerformed
-    {//GEN-HEADEREND:event_jButton3ActionPerformed
-        JOptionPane.showMessageDialog(frameVentas.this, "Procesando pago...", "Pagar Compra", JOptionPane.INFORMATION_MESSAGE);
-    }//GEN-LAST:event_jButton3ActionPerformed
-
-    private void clienteActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_clienteActionPerformed
-    {//GEN-HEADEREND:event_clienteActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_clienteActionPerformed
-
-    private void claveActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_claveActionPerformed
-    {//GEN-HEADEREND:event_claveActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_claveActionPerformed
-
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton1ActionPerformed
-    {//GEN-HEADEREND:event_jButton1ActionPerformed
-        if (clave.getText().trim().isEmpty())
+    private void agregarBtnActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_agregarBtnActionPerformed
+    {//GEN-HEADEREND:event_agregarBtnActionPerformed
+        if (productoSeleccionado == null)
         {
-            JOptionPane.showMessageDialog(frameVentas.this, "Ingrese una clave", "Clave vacia", JOptionPane.WARNING_MESSAGE);
-        } else
-        {
-            JOptionPane.showMessageDialog(frameVentas.this, "Buscando...", "Procesando Busqueda", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Busca primero un producto.");
+            return;
         }
-    }//GEN-LAST:event_jButton1ActionPerformed
 
-    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton4ActionPerformed
-    {//GEN-HEADEREND:event_jButton4ActionPerformed
-        if (cliente.getText().trim().isEmpty())
+        try
         {
-            JOptionPane.showMessageDialog(frameVentas.this, "Ingrese una ID", "ID vacia", JOptionPane.WARNING_MESSAGE);
-        } else
+            String nombre = productoSeleccionado.getNombre();
+            int cantidad = Integer.parseInt(txtCantidad.getText());
+            double precio = productoSeleccionado.getPrecio();
+            int descuento = productoSeleccionado.getDescuento();
+            double subtotal = (precio * cantidad) - ((precio * cantidad) * descuento / 100.0);
+
+            DefaultTableModel model = (DefaultTableModel) tableVenta.getModel();
+            model.addRow(new Object[]
+            {
+                productoSeleccionado.getClave(),
+                nombre,
+                precio,
+                cantidad,
+                descuento + "%",
+                String.format("%.2f", subtotal)
+            });
+
+            productoSeleccionado = null; // Limpiar selección actual
+            limpiarCamposProducto();
+            calcularTotales();
+
+        } catch (NumberFormatException ex)
         {
-            JOptionPane.showMessageDialog(frameVentas.this, "Buscando...", "Procesando Busqueda", JOptionPane.INFORMATION_MESSAGE);
-        }    }//GEN-LAST:event_jButton4ActionPerformed
+            JOptionPane.showMessageDialog(null, "Cantidad inválida.");
+        }
+    }//GEN-LAST:event_agregarBtnActionPerformed
+
+    private void pagarBtnActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_pagarBtnActionPerformed
+    {//GEN-HEADEREND:event_pagarBtnActionPerformed
+        try
+        {
+            Ventas venta = new Ventas();
+            venta.setId_vendedor(getIdVendedorActual());
+            venta.setId_cliente(Integer.parseInt(txtCliente.getText()));
+            venta.setId_pago(obtenerIdMetodoPago());
+            venta.setFecha_compra(new java.util.Date());
+            venta.setTotal(Double.parseDouble(txtTotal.getText()));
+
+            List<Detalle_Venta> listaDetalles = obtenerDetallesDesdeTabla();
+
+            Metodo_Pago metodo_Pago = new Metodo_Pago();
+            metodo_Pago.setTipo_pago(title);
+
+            boolean exito = VentasDAO.registrarVenta(venta, listaDetalles, metodo_Pago);
+
+            if (exito)
+            {
+                JOptionPane.showMessageDialog(null, "Venta registrada con éxito.");
+                limpiarFormulario();
+            } else
+            {
+                JOptionPane.showMessageDialog(null, "Error al registrar la venta.");
+            }
+
+        } catch (Exception ex)
+        {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error: " + ex.getMessage());
+        }
+    }//GEN-LAST:event_pagarBtnActionPerformed
+
+    private void txtClienteActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_txtClienteActionPerformed
+    {//GEN-HEADEREND:event_txtClienteActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtClienteActionPerformed
+
+    private void txtClaveActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_txtClaveActionPerformed
+    {//GEN-HEADEREND:event_txtClaveActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtClaveActionPerformed
+
+    private void buscarProBtnActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_buscarProBtnActionPerformed
+    {//GEN-HEADEREND:event_buscarProBtnActionPerformed
+        try
+        {
+            int clave = Integer.parseInt(txtClave.getText());
+            ProductoDAO productoDAO = new ProductoDAO();
+            Producto producto = productoDAO.obtenerIdPorClave(clave);
+
+            if (producto != null)
+            {
+                txtNombre.setText(producto.getNombre());
+                txtPrecio.setText(String.valueOf(producto.getPrecio()));
+                txtDescuento.setText(String.valueOf(producto.getDescuento()));
+
+                productoSeleccionado = producto;
+            } else
+            {
+                JOptionPane.showMessageDialog(this, "Producto no encontrado.", "Error", JOptionPane.WARNING_MESSAGE);
+            }
+        } catch (NumberFormatException ex)
+        {
+            JOptionPane.showMessageDialog(this, "Clave inválida.", "Error", JOptionPane.WARNING_MESSAGE);
+        }
+    }//GEN-LAST:event_buscarProBtnActionPerformed
+
+    private void buscarCliBtnActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_buscarCliBtnActionPerformed
+    {//GEN-HEADEREND:event_buscarCliBtnActionPerformed
+        try
+        {
+            int idCliente = Integer.parseInt(txtCliente.getText());
+            ClienteDAO cdao = new ClienteDAO();
+            Cliente cliente = cdao.obtenerNombrePorId(idCliente);
+
+            if (cliente != null)
+            {
+                txtNombreCliente.setText(cliente.getNombre());
+            } else
+            {
+                JOptionPane.showMessageDialog(this, "Cliente no encontrado.", "Error", JOptionPane.WARNING_MESSAGE);
+            }
+        } catch (NumberFormatException ex)
+        {
+            JOptionPane.showMessageDialog(this, "La clave es incorrecta.", "Error", JOptionPane.WARNING_MESSAGE);
+        }
+    }//GEN-LAST:event_buscarCliBtnActionPerformed
+
+    private void pagarBtn1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_pagarBtn1ActionPerformed
+    {//GEN-HEADEREND:event_pagarBtn1ActionPerformed
+        int confirmacion = JOptionPane.showConfirmDialog(frameVentas.this,
+                "¿Está seguro de cancelar toda la venta? Este proceso no es reversible", "Confirmar eliminación",
+                JOptionPane.YES_NO_OPTION);
+
+        if (confirmacion == JOptionPane.YES_OPTION)
+        {
+            limpiarFormulario();
+        }
+    }//GEN-LAST:event_pagarBtn1ActionPerformed
+
+    private void calcularTotales()
+    {
+        double subtotal = 0.0;
+        double iva = 0.0;
+        double total = 0.0;
+
+        DefaultTableModel modelo = (DefaultTableModel) tableVenta.getModel();
+        int filas = modelo.getRowCount();
+
+        for (int i = 0; i < filas; i++)
+        {
+            Object valor = modelo.getValueAt(i, 5); 
+            if (valor != null)
+            {
+                subtotal += Double.parseDouble(valor.toString());
+            }
+        }
+
+        iva = subtotal * 0.16; // IVA del 16%
+        total = subtotal + iva;
+
+        txtSubtotal.setText(String.format("%.2f", subtotal));
+        txtIVA.setText(String.format("%.2f", iva));
+        txtTotal.setText(String.format("%.2f", total));
+    }
+
+    private void limpiarCamposProducto()
+    {
+        txtClave.setText("");
+        txtNombre.setText("");
+        txtPrecio.setText("");
+        txtDescuento.setText("");
+        txtCantidad.setText("");
+    }
+
+    private void limpiarFormulario()
+    {
+        txtClave.setText("");
+        txtNombre.setText("");
+        txtPrecio.setText("");
+        txtCantidad.setText("");
+        txtDescuento.setText("");
+        txtSubtotal.setText("");
+        txtCliente.setText("");
+        txtTotal.setText("");
+        txtNombreCliente.setText("");
+        txtIVA.setText("");
+        ((DefaultTableModel) tableVenta.getModel()).setRowCount(0);
+        efectivoCB.setSelected(false);
+        tarjetaCB.setSelected(false);
+    }
+
+    private List<Detalle_Venta> obtenerDetallesDesdeTabla()
+    {
+        List<Detalle_Venta> lista = new ArrayList<>();
+        DefaultTableModel model = (DefaultTableModel) tableVenta.getModel();
+
+        for (int i = 0; i < model.getRowCount(); i++)
+        {
+            int clave = Integer.parseInt(model.getValueAt(i, 0).toString()); // clave está en la columna 5
+            Producto producto = ProductoDAO.obtenerIdPorClave(clave);
+
+            if (producto != null)
+            {
+                int cantidad = Integer.parseInt(model.getValueAt(i, 3).toString());
+                double precioUnitario = Double.parseDouble(model.getValueAt(i, 2).toString());
+
+                Detalle_Venta det = new Detalle_Venta();
+                det.setId_producto(producto.getId_producto());
+                det.setCantidad(cantidad);
+                det.setPrecio_unitario(precioUnitario);
+
+                lista.add(det);
+            }
+        }
+        return lista;
+    }
+
+    private int obtenerIdMetodoPago()
+    {
+        if (efectivoCB.isSelected())
+        {
+            return 1;
+        }
+        if (tarjetaCB.isSelected())
+        {
+            return 2;
+        }
+        return 0; // o lanzar error si no se seleccionó ninguno
+    }
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTextField clave;
-    private javax.swing.JTextField cliente;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
-    private javax.swing.JCheckBox jCheckBox1;
-    private javax.swing.JCheckBox jCheckBox2;
+    private javax.swing.JButton agregarBtn;
+    private javax.swing.JButton buscarCliBtn;
+    private javax.swing.JButton buscarProBtn;
+    private javax.swing.JCheckBox efectivoCB;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -305,13 +539,19 @@ public class frameVentas extends javax.swing.JInternalFrame
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JTextArea jTextArea1;
-    private javax.swing.JTextArea jTextArea3;
-    private javax.swing.JTextArea jTextArea4;
-    private javax.swing.JTextArea jTextArea5;
-    private javax.swing.JTextArea jTextArea6;
-    private javax.swing.JTextArea jTextArea7;
-    private javax.swing.JTextArea jTextArea8;
+    private javax.swing.JButton pagarBtn;
+    private javax.swing.JButton pagarBtn1;
+    private javax.swing.JTable tableVenta;
+    private javax.swing.JCheckBox tarjetaCB;
+    private javax.swing.JTextArea txtCantidad;
+    private javax.swing.JTextField txtClave;
+    private javax.swing.JTextField txtCliente;
+    private javax.swing.JTextArea txtDescuento;
+    private javax.swing.JTextArea txtIVA;
+    private javax.swing.JTextArea txtNombre;
+    private javax.swing.JTextField txtNombreCliente;
+    private javax.swing.JTextArea txtPrecio;
+    private javax.swing.JTextArea txtSubtotal;
+    private javax.swing.JTextArea txtTotal;
     // End of variables declaration//GEN-END:variables
 }

@@ -1,12 +1,13 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JInternalFrame.java to edit this template
- */
 package interfaz;
 
+import dao.ClienteDAO;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.JOptionPane;
+import javax.swing.event.DocumentEvent;
+import javax.swing.table.DefaultTableModel;
+import modelo.Cliente;
 
 /**
  *
@@ -21,6 +22,30 @@ public class frameClientes extends javax.swing.JInternalFrame
     public frameClientes()
     {
         initComponents();
+        this.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        ((javax.swing.plaf.basic.BasicInternalFrameUI) this.getUI()).setNorthPane(null);
+
+        txtID.getDocument().addDocumentListener(new javax.swing.event.DocumentListener()
+        {
+            @Override
+            public void insertUpdate(DocumentEvent e)
+            {
+                filtrarClientes();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e)
+            {
+                filtrarClientes();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e)
+            {
+                filtrarClientes();
+            }
+
+        });
     }
 
     /**
@@ -36,31 +61,19 @@ public class frameClientes extends javax.swing.JInternalFrame
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tableClientes = new javax.swing.JTable();
         jLabel6 = new javax.swing.JLabel();
-        jButton2 = new javax.swing.JButton();
-        jLabel8 = new javax.swing.JLabel();
-        jLabel9 = new javax.swing.JLabel();
-        jLabel10 = new javax.swing.JLabel();
-        jLabel11 = new javax.swing.JLabel();
-        jButton3 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
-        jTextArea1 = new javax.swing.JTextArea();
+        eliminarBtn = new javax.swing.JButton();
         txtID = new javax.swing.JTextField();
-        jScrollPane4 = new javax.swing.JScrollPane();
-        jTextArea3 = new javax.swing.JTextArea();
-        jScrollPane3 = new javax.swing.JScrollPane();
-        jTextArea2 = new javax.swing.JTextArea();
-        jTextArea4 = new javax.swing.JTextArea();
-        jButton5 = new javax.swing.JButton();
         jLabel7 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
-        registrar = new javax.swing.JButton();
-        limpiar = new javax.swing.JButton();
+        modificarBtn = new javax.swing.JButton();
+        registrarBtn = new javax.swing.JButton();
+        limpiarBtn = new javax.swing.JButton();
         txtNombre = new javax.swing.JTextField();
         txtTelefono = new javax.swing.JTextField();
         txtDireccion = new javax.swing.JTextField();
@@ -70,90 +83,81 @@ public class frameClientes extends javax.swing.JInternalFrame
         setBorder(null);
         setTitle("Clientes");
         setPreferredSize(new java.awt.Dimension(700, 550));
+        addInternalFrameListener(new javax.swing.event.InternalFrameListener()
+        {
+            public void internalFrameActivated(javax.swing.event.InternalFrameEvent evt)
+            {
+            }
+            public void internalFrameClosed(javax.swing.event.InternalFrameEvent evt)
+            {
+            }
+            public void internalFrameClosing(javax.swing.event.InternalFrameEvent evt)
+            {
+            }
+            public void internalFrameDeactivated(javax.swing.event.InternalFrameEvent evt)
+            {
+            }
+            public void internalFrameDeiconified(javax.swing.event.InternalFrameEvent evt)
+            {
+            }
+            public void internalFrameIconified(javax.swing.event.InternalFrameEvent evt)
+            {
+            }
+            public void internalFrameOpened(javax.swing.event.InternalFrameEvent evt)
+            {
+                formInternalFrameOpened(evt);
+            }
+        });
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jPanel1.setMinimumSize(new java.awt.Dimension(680, 530));
         jPanel1.setPreferredSize(new java.awt.Dimension(680, 530));
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jTable1.setFont(new java.awt.Font("Georgia", 0, 18)); // NOI18N
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tableClientes.setFont(new java.awt.Font("Georgia", 0, 14)); // NOI18N
+        tableClientes.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][]
             {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
             },
             new String []
             {
-                "ID", "Nombre", "Edad", "Telefono"
+                "ID", "Nombre", "Dirección", "Telefono", "Edad"
             }
-        ));
-        jScrollPane1.setViewportView(jTable1);
+        )
+        {
+            boolean[] canEdit = new boolean []
+            {
+                false, false, false, false, false
+            };
 
-        jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 60, 650, 190));
+            public boolean isCellEditable(int rowIndex, int columnIndex)
+            {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane1.setViewportView(tableClientes);
+
+        jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 80, 640, 340));
 
         jLabel6.setFont(new java.awt.Font("Georgia", 0, 18)); // NOI18N
         jLabel6.setText("ID:");
-        jPanel1.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 10, -1, -1));
+        jPanel1.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 30, -1, -1));
 
-        jButton2.setBackground(new java.awt.Color(51, 255, 51));
-        jButton2.setFont(new java.awt.Font("Georgia", 0, 18)); // NOI18N
-        jButton2.setText("Detalles");
-        jButton2.addActionListener(new java.awt.event.ActionListener()
+        eliminarBtn.setBackground(new java.awt.Color(255, 51, 51));
+        eliminarBtn.setFont(new java.awt.Font("Georgia", 0, 18)); // NOI18N
+        eliminarBtn.setText("Eliminar");
+        eliminarBtn.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
             {
-                jButton2ActionPerformed(evt);
+                eliminarBtnActionPerformed(evt);
             }
         });
-        jPanel1.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 260, -1, -1));
-
-        jLabel8.setFont(new java.awt.Font("Georgia", 0, 18)); // NOI18N
-        jLabel8.setText("Nombre:");
-        jPanel1.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 300, 120, 20));
-
-        jLabel9.setFont(new java.awt.Font("Georgia", 0, 18)); // NOI18N
-        jLabel9.setText("Domicilio:");
-        jPanel1.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 380, 130, 20));
-
-        jLabel10.setFont(new java.awt.Font("Georgia", 0, 18)); // NOI18N
-        jLabel10.setText("Telefono:");
-        jPanel1.add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 300, 120, 20));
-
-        jLabel11.setFont(new java.awt.Font("Georgia", 0, 18)); // NOI18N
-        jLabel11.setText("Edad:");
-        jPanel1.add(jLabel11, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 380, 90, -1));
-
-        jButton3.setBackground(new java.awt.Color(51, 255, 51));
-        jButton3.setFont(new java.awt.Font("Georgia", 0, 18)); // NOI18N
-        jButton3.setText("Historial");
-        jButton3.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                jButton3ActionPerformed(evt);
-            }
-        });
-        jPanel1.add(jButton3, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 450, -1, -1));
-
-        jButton4.setBackground(new java.awt.Color(255, 51, 51));
-        jButton4.setFont(new java.awt.Font("Georgia", 0, 18)); // NOI18N
-        jButton4.setText("Eliminar");
-        jButton4.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                jButton4ActionPerformed(evt);
-            }
-        });
-        jPanel1.add(jButton4, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 450, -1, -1));
-
-        jTextArea1.setColumns(20);
-        jTextArea1.setFont(new java.awt.Font("Georgia", 0, 16)); // NOI18N
-        jTextArea1.setRows(5);
-        jPanel1.add(jTextArea1, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 400, 60, 40));
+        jPanel1.add(eliminarBtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 440, -1, -1));
 
         txtID.setFont(new java.awt.Font("Georgia", 0, 16)); // NOI18N
         txtID.addActionListener(new java.awt.event.ActionListener()
@@ -163,42 +167,12 @@ public class frameClientes extends javax.swing.JInternalFrame
                 txtIDActionPerformed(evt);
             }
         });
-        jPanel1.add(txtID, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 10, 120, 28));
-
-        jTextArea3.setColumns(20);
-        jTextArea3.setFont(new java.awt.Font("Georgia", 0, 16)); // NOI18N
-        jTextArea3.setRows(5);
-        jScrollPane4.setViewportView(jTextArea3);
-
-        jPanel1.add(jScrollPane4, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 320, 350, 40));
-
-        jTextArea2.setColumns(20);
-        jTextArea2.setRows(5);
-        jScrollPane3.setViewportView(jTextArea2);
-
-        jPanel1.add(jScrollPane3, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 400, 350, 40));
-
-        jTextArea4.setColumns(20);
-        jTextArea4.setFont(new java.awt.Font("Georgia", 0, 16)); // NOI18N
-        jTextArea4.setRows(5);
-        jPanel1.add(jTextArea4, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 320, 120, 40));
-
-        jButton5.setBackground(new java.awt.Color(51, 255, 51));
-        jButton5.setFont(new java.awt.Font("Georgia", 0, 18)); // NOI18N
-        jButton5.setText("Buscar");
-        jButton5.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                jButton5ActionPerformed(evt);
-            }
-        });
-        jPanel1.add(jButton5, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 10, -1, -1));
+        jPanel1.add(txtID, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 30, 310, 28));
 
         jLabel7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/Fondo.png"))); // NOI18N
         jPanel1.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 700, 510));
 
-        jTabbedPane1.addTab("Consulta", jPanel1);
+        jTabbedPane1.addTab("Consulta de clientes", jPanel1);
 
         jPanel2.setMinimumSize(new java.awt.Dimension(680, 530));
         jPanel2.setPreferredSize(new java.awt.Dimension(680, 530));
@@ -220,29 +194,41 @@ public class frameClientes extends javax.swing.JInternalFrame
         jLabel5.setText("Edad:");
         jPanel2.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 290, -1, -1));
 
-        registrar.setBackground(new java.awt.Color(51, 255, 51));
-        registrar.setFont(new java.awt.Font("Georgia", 0, 18)); // NOI18N
-        registrar.setText("Registrar");
-        registrar.addActionListener(new java.awt.event.ActionListener()
+        modificarBtn.setBackground(new java.awt.Color(51, 255, 51));
+        modificarBtn.setFont(new java.awt.Font("Georgia", 0, 18)); // NOI18N
+        modificarBtn.setText("Modificar");
+        modificarBtn.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
             {
-                registrarActionPerformed(evt);
+                modificarBtnActionPerformed(evt);
             }
         });
-        jPanel2.add(registrar, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 380, -1, -1));
+        jPanel2.add(modificarBtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 380, -1, -1));
 
-        limpiar.setBackground(new java.awt.Color(255, 51, 51));
-        limpiar.setFont(new java.awt.Font("Georgia", 0, 18)); // NOI18N
-        limpiar.setText("Limpiar registro");
-        limpiar.addActionListener(new java.awt.event.ActionListener()
+        registrarBtn.setBackground(new java.awt.Color(51, 255, 51));
+        registrarBtn.setFont(new java.awt.Font("Georgia", 0, 18)); // NOI18N
+        registrarBtn.setText("Registrar");
+        registrarBtn.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
             {
-                limpiarActionPerformed(evt);
+                registrarBtnActionPerformed(evt);
             }
         });
-        jPanel2.add(limpiar, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 380, -1, -1));
+        jPanel2.add(registrarBtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 380, -1, -1));
+
+        limpiarBtn.setBackground(new java.awt.Color(255, 51, 51));
+        limpiarBtn.setFont(new java.awt.Font("Georgia", 0, 18)); // NOI18N
+        limpiarBtn.setText("Limpiar registro");
+        limpiarBtn.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                limpiarBtnActionPerformed(evt);
+            }
+        });
+        jPanel2.add(limpiarBtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 380, -1, -1));
 
         txtNombre.setFont(new java.awt.Font("Georgia", 0, 16)); // NOI18N
         txtNombre.addActionListener(new java.awt.event.ActionListener()
@@ -287,7 +273,7 @@ public class frameClientes extends javax.swing.JInternalFrame
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/Fondo.png"))); // NOI18N
         jPanel2.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 700, 530));
 
-        jTabbedPane1.addTab("Registro", jPanel2);
+        jTabbedPane1.addTab("Registro y modificación de clientes", jPanel2);
 
         getContentPane().add(jTabbedPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(-4, 0, 710, 550));
 
@@ -314,8 +300,8 @@ public class frameClientes extends javax.swing.JInternalFrame
         // TODO add your handling code here:
     }//GEN-LAST:event_txtEdadActionPerformed
 
-    private void registrarActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_registrarActionPerformed
-    {//GEN-HEADEREND:event_registrarActionPerformed
+    private void registrarBtnActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_registrarBtnActionPerformed
+    {//GEN-HEADEREND:event_registrarBtnActionPerformed
         String nombre = txtNombre.getText();
         String direccion = txtDireccion.getText();
         String telefono = txtTelefono.getText();
@@ -335,7 +321,7 @@ public class frameClientes extends javax.swing.JInternalFrame
         Matcher matchDireccion = pattDireccion.matcher(direccion);
         Matcher matchTelefono = pattTelefono.matcher(telefono);
         Matcher matchEdad = pattEdad.matcher(edad);
-        
+
         boolean validaNombre = matchNombre.matches();
         boolean validaDireccion = matchDireccion.matches();
         boolean validaTelefono = matchTelefono.matches();
@@ -346,96 +332,190 @@ public class frameClientes extends javax.swing.JInternalFrame
             JOptionPane.showMessageDialog(frameClientes.this, "Hay campos vacios o incorrectos", "Faltan datos", JOptionPane.WARNING_MESSAGE);
         } else
         {
-            JOptionPane.showMessageDialog(frameClientes.this, "Agregando Cliente...", "Registrar", JOptionPane.INFORMATION_MESSAGE);
+            try
+            {
+                int edadInt = Integer.parseInt(edad);
+
+                Cliente nuevoCliente = new Cliente(0, nombre, direccion, telefono, edadInt);
+                if (ClienteDAO.insertarCliente(nuevoCliente))
+                {
+                    JOptionPane.showMessageDialog(frameClientes.this, "Agregando Cliente...", "Registrar", JOptionPane.INFORMATION_MESSAGE);
+                    llenarTablaClientes();
+                    limpiarCampos();
+                } else
+                {
+                    JOptionPane.showMessageDialog(frameClientes.this, "Error al agregar el cliente", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            } catch (Exception e)
+            {
+                JOptionPane.showMessageDialog(frameClientes.this, "Edad inválida", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+
         }
-    }//GEN-LAST:event_registrarActionPerformed
-
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton2ActionPerformed
-    {//GEN-HEADEREND:event_jButton2ActionPerformed
-        JOptionPane.showMessageDialog(frameClientes.this, "Obteniendo mas detalles...", "Detalles", JOptionPane.INFORMATION_MESSAGE);
-    }//GEN-LAST:event_jButton2ActionPerformed
-
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton3ActionPerformed
-    {//GEN-HEADEREND:event_jButton3ActionPerformed
-        JOptionPane.showMessageDialog(frameClientes.this, "Obteniendo historial...", "Historial", JOptionPane.INFORMATION_MESSAGE);
-    }//GEN-LAST:event_jButton3ActionPerformed
+    }//GEN-LAST:event_registrarBtnActionPerformed
 
     private void txtIDActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_txtIDActionPerformed
     {//GEN-HEADEREND:event_txtIDActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtIDActionPerformed
 
-    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton4ActionPerformed
-    {//GEN-HEADEREND:event_jButton4ActionPerformed
-        int r = JOptionPane.showConfirmDialog(frameClientes.this, "Esta seguro de eliminar cliente", "Eliminar", JOptionPane.INFORMATION_MESSAGE);
-        if (r == 0)
-        {
-            JOptionPane.showMessageDialog(frameClientes.this, "Eliminado...", "Eliminar", JOptionPane.INFORMATION_MESSAGE);
+    private void eliminarBtnActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_eliminarBtnActionPerformed
+    {//GEN-HEADEREND:event_eliminarBtnActionPerformed
+        int filaSeleccionada = tableClientes.getSelectedRow();
 
+        if (filaSeleccionada == -1)
+        {
+            JOptionPane.showMessageDialog(this, "Selecciona un cliente para eliminar.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            return;
         }
-    }//GEN-LAST:event_jButton4ActionPerformed
 
-    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton5ActionPerformed
-    {//GEN-HEADEREND:event_jButton5ActionPerformed
-        if (txtID.getText().trim().isEmpty())
+        int confirmacion = JOptionPane.showConfirmDialog(this, "¿Estás seguro de eliminar este cliente?", "Confirmar eliminación", JOptionPane.YES_NO_OPTION);
+        if (confirmacion != JOptionPane.YES_OPTION)
         {
-            JOptionPane.showMessageDialog(frameClientes.this, "Ingrese un ID", "ID vacio", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        // Suponiendo que la columna 0 es el id_cliente
+        int idCliente = Integer.parseInt(tableClientes.getValueAt(filaSeleccionada, 0).toString());
+
+        ClienteDAO clienteDAO = new ClienteDAO();
+        clienteDAO.eliminarCliente(idCliente);
+        llenarTablaClientes();
+    }//GEN-LAST:event_eliminarBtnActionPerformed
+
+    private void limpiarBtnActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_limpiarBtnActionPerformed
+    {//GEN-HEADEREND:event_limpiarBtnActionPerformed
+        limpiarCampos();
+    }//GEN-LAST:event_limpiarBtnActionPerformed
+
+    private void modificarBtnActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_modificarBtnActionPerformed
+    {//GEN-HEADEREND:event_modificarBtnActionPerformed
+        String nombre = txtNombre.getText().trim();
+        String direccion = txtDireccion.getText().trim();
+        String telefono = txtTelefono.getText().trim();
+        String edadTexto = txtEdad.getText().trim();
+
+        if (nombre.isEmpty() || direccion.isEmpty() || telefono.isEmpty() || edadTexto.isEmpty())
+        {
+            JOptionPane.showMessageDialog(this, "Por favor llena todos los campos.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        int confirmacion = JOptionPane.showConfirmDialog(this,
+                "¿Estás seguro de modificar este empleado?", "Confirmar",
+                JOptionPane.YES_NO_OPTION);
+        if (confirmacion != JOptionPane.YES_OPTION)
+        {
+            return;
+        }
+
+        int edad;
+        try
+        {
+            edad = Integer.parseInt(edadTexto);
+        } catch (NumberFormatException e)
+        {
+            JOptionPane.showMessageDialog(this, "Edad inválida. Debe ser un número.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        Cliente cliente = new Cliente();
+        cliente.setNombre(nombre);
+        cliente.setDireccion(direccion);
+        cliente.setTelefono(telefono);
+        cliente.setEdad(edad);
+
+        ClienteDAO clienteDAO = new ClienteDAO();
+        if (clienteDAO.actualizarCliente(cliente))
+        {
+            JOptionPane.showMessageDialog(this, "Cliente actualizado correctamente.");
+            limpiarCampos(); // si quieres, para limpiar después
+            llenarTablaClientes();
         } else
         {
-            String id = txtID.getText();
+            JOptionPane.showMessageDialog(this, "Error al actualizar el cliente.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_modificarBtnActionPerformed
 
-            String expRID = "[a-zA-Z0-9]{10}";
+    private void formInternalFrameOpened(javax.swing.event.InternalFrameEvent evt)//GEN-FIRST:event_formInternalFrameOpened
+    {//GEN-HEADEREND:event_formInternalFrameOpened
+        llenarTablaClientes();
+    }//GEN-LAST:event_formInternalFrameOpened
 
-            Pattern pattID = Pattern.compile(expRID);
-            Matcher matchID = pattID.matcher(id);
+    private void limpiarCampos()
+    {
+        txtNombre.setText("");
+        txtDireccion.setText("");
+        txtTelefono.setText("");
+        txtEdad.setText("");
+    }
 
-            boolean valID = matchID.matches();
+    public void filtrarClientes()
+    {
+        String textoBusqueda = txtID.getText().trim().toLowerCase();
+        DefaultTableModel modeloTabla = (DefaultTableModel) tableClientes.getModel();
 
-            if (!valID)
+        modeloTabla.setRowCount(0);
+
+        ClienteDAO clienteDAO = new ClienteDAO();
+
+        List<Cliente> clientes = clienteDAO.obtenerClientes();
+
+        for (Cliente cliente : clientes)
+        {
+            if (cliente.getNombre().toLowerCase().contains(textoBusqueda))
             {
-                JOptionPane.showMessageDialog(frameClientes.this, "La ID ingresada no se encuentra registrada o es incorrecta", "ID no escontrada", JOptionPane.WARNING_MESSAGE);
-            } else
-            {
-                JOptionPane.showMessageDialog(frameClientes.this, "Buscando...", "Procesando Busqueda", JOptionPane.INFORMATION_MESSAGE);
+                Object[] fila =
+                {
+                    cliente.getId_cliente(),
+                    cliente.getNombre(),
+                    cliente.getDireccion(),
+                    cliente.getTelefono(),
+                    cliente.getEdad()
+                };
+                modeloTabla.addRow(fila);
             }
         }
-    }//GEN-LAST:event_jButton5ActionPerformed
+    }
 
-    private void limpiarActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_limpiarActionPerformed
-    {//GEN-HEADEREND:event_limpiarActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_limpiarActionPerformed
+    private void llenarTablaClientes()
+    {
+        DefaultTableModel modelo = (DefaultTableModel) tableClientes.getModel();
+        modelo.setRowCount(0);
 
+        List<Cliente> clientes = ClienteDAO.listarCliente();
+
+        for (Cliente cliente : clientes)
+        {
+            Object[] fila =
+            {
+                cliente.getId_cliente(),
+                cliente.getNombre(),
+                cliente.getDireccion(),
+                cliente.getTelefono(),
+                cliente.getEdad()
+            };
+            modelo.addRow(fila);
+        }
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton5;
+    private javax.swing.JButton eliminarBtn;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel10;
-    private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
-    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JTextArea jTextArea1;
-    private javax.swing.JTextArea jTextArea2;
-    private javax.swing.JTextArea jTextArea3;
-    private javax.swing.JTextArea jTextArea4;
-    private javax.swing.JButton limpiar;
-    private javax.swing.JButton registrar;
+    private javax.swing.JButton limpiarBtn;
+    private javax.swing.JButton modificarBtn;
+    private javax.swing.JButton registrarBtn;
+    private javax.swing.JTable tableClientes;
     private javax.swing.JTextField txtDireccion;
     private javax.swing.JTextField txtEdad;
     private javax.swing.JTextField txtID;

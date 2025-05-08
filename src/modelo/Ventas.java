@@ -9,25 +9,25 @@ import java.util.Date;
 public class Ventas
 {
     private int id_venta;
-    private int id_producto;
     private int id_vendedor;
     private int id_cliente;
     private int id_pago;
     private Date fecha_compra;
+    private double total;
 
     public Ventas()
     {
     }
 
-    public Ventas(int id_venta, int id_producto, int id_vendedor, int id_cliente, int id_pago, Date fecha_compra)
+    public Ventas(int id_venta, int id_vendedor, int id_cliente, int id_pago, Date fecha_compra, double total)
     {
         this.id_venta = id_venta;
-        this.id_producto = id_producto;
         this.id_vendedor = id_vendedor;
         this.id_cliente = id_cliente;
         this.id_pago = id_pago;
         this.fecha_compra = fecha_compra;
-    }
+        this.total = total;
+    }    
 
     /**
      * @return the id_venta
@@ -43,22 +43,6 @@ public class Ventas
     public void setId_venta(int id_venta)
     {
         this.id_venta = id_venta;
-    }
-
-    /**
-     * @return the id_producto
-     */
-    public int getId_producto()
-    {
-        return id_producto;
-    }
-
-    /**
-     * @param id_producto the id_producto to set
-     */
-    public void setId_producto(int id_producto)
-    {
-        this.id_producto = id_producto;
     }
 
     /**
@@ -123,6 +107,22 @@ public class Ventas
     public void setFecha_compra(Date fecha_compra)
     {
         this.fecha_compra = fecha_compra;
+    }
+
+    /**
+     * @return the total
+     */
+    public double getTotal()
+    {
+        return total;
+    }
+
+    /**
+     * @param total the total to set
+     */
+    public void setTotal(double total)
+    {
+        this.total = total;
     }
     
     

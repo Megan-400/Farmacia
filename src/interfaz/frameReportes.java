@@ -1,8 +1,20 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JInternalFrame.java to edit this template
- */
 package interfaz;
+
+import dao.GraficosDAO;
+import dao.VentasDAO;
+import java.io.IOException;
+import java.util.Map;
+import javax.swing.JInternalFrame;
+import javax.swing.JOptionPane;
+import org.jfree.chart.ChartPanel;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import modelo.PDFExportador;
+import org.jfree.chart.JFreeChart;
 
 /**
  *
@@ -11,12 +23,15 @@ package interfaz;
 public class frameReportes extends javax.swing.JInternalFrame
 {
 
+    private List<JFreeChart> chartsList = new ArrayList<>();
+
     /**
      * Creates new form frameReportes
      */
     public frameReportes()
     {
         initComponents();
+        cargarGraficas();
     }
 
     /**
@@ -29,24 +44,106 @@ public class frameReportes extends javax.swing.JInternalFrame
     private void initComponents()
     {
 
+        tabbedPane = new javax.swing.JTabbedPane();
+        exportBtn = new javax.swing.JButton();
+
         setTitle("Reportes de ventas");
         setToolTipText("");
+        setPreferredSize(new java.awt.Dimension(700, 550));
+        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        getContentPane().add(tabbedPane, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 40, 700, 460));
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 698, Short.MAX_VALUE)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 528, Short.MAX_VALUE)
-        );
+        exportBtn.setFont(new java.awt.Font("Georgia", 0, 16)); // NOI18N
+        exportBtn.setText("Exportar");
+        exportBtn.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                exportBtnActionPerformed(evt);
+            }
+        });
+        getContentPane().add(exportBtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(604, 0, 80, 40));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void exportBtnActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_exportBtnActionPerformed
+    {//GEN-HEADEREND:event_exportBtnActionPerformed
+        if (chartsList.isEmpty())
+        {
+            JOptionPane.showMessageDialog(this,
+                    "No hay gráficos para exportar",
+                    "Advertencia", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Guardar PDF");
+        fileChooser.setFileFilter(new FileNameExtensionFilter("Archivos PDF", "pdf"));
+
+        if (fileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION)
+        {
+            String filePath = fileChooser.getSelectedFile().getAbsolutePath();
+
+            if (!filePath.toLowerCase().endsWith(".pdf"))
+            {
+                filePath += ".pdf";
+            }
+
+            try
+            {
+                PDFExportador.exportChartsToPDF(chartsList, filePath);
+                JOptionPane.showMessageDialog(this,
+                        "PDF exportado exitosamente!",
+                        "Éxito", JOptionPane.INFORMATION_MESSAGE);
+            } catch (IllegalArgumentException | IOException e)
+            {
+                JOptionPane.showMessageDialog(this,
+                        "Error: " + e.getMessage(),
+                        "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }//GEN-LAST:event_exportBtnActionPerformed
+
+    public void cargarGraficas()
+    {
+        try
+        {
+            VentasDAO dao = new VentasDAO();
+            GraficosDAO graficos = new GraficosDAO();
+
+            // 1. Gráfico por Vendedor
+            Map<String, Double> datosVendedor = dao.ventasPorVendedor();
+            ChartPanel panelVendedor = graficos.graficoVentasPorVendedor(datosVendedor);
+            tabbedPane.addTab("Por Vendedor", panelVendedor);
+            chartsList.add(panelVendedor.getChart()); // Añadir el JFreeChart a la lista
+
+            // 2. Gráfico por Mes
+            Map<String, Double> datosMes = dao.ventasPorMes(2025);
+            ChartPanel panelMes = graficos.graficoVentasPorMes(datosMes, 2025);
+            tabbedPane.addTab("Por Mes", panelMes);
+            chartsList.add(panelMes.getChart());
+
+            // 3. Gráfico por Año
+            Map<Integer, Double> datosAnual = dao.ventasAnuales();
+            ChartPanel panelAnual = graficos.graficoVentasAnuales(datosAnual);
+            tabbedPane.addTab("Por Año", panelAnual);
+            chartsList.add(panelAnual.getChart());
+
+            // 4. Gráfico por Cliente
+            Map<String, Double> datosCliente = dao.ventasPorCliente();
+            ChartPanel panelCliente = graficos.graficoVentasPorCliente(datosCliente);
+            tabbedPane.addTab("Por Cliente", panelCliente);
+            chartsList.add(panelCliente.getChart());
+
+        } catch (SQLException ex)
+        {
+            JOptionPane.showMessageDialog(this, "Error al cargar gráficas: " + ex.getMessage());
+        }
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton exportBtn;
+    private javax.swing.JTabbedPane tabbedPane;
     // End of variables declaration//GEN-END:variables
 }

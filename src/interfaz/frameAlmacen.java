@@ -1,12 +1,14 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JInternalFrame.java to edit this template
- */
 package interfaz;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.JOptionPane;
+import java.util.List;
+import javax.swing.table.DefaultTableModel;
+import dao.ProductoDAO;
+import java.util.Date;
+import javax.swing.event.DocumentEvent;
+import modelo.Producto;
 
 /**
  *
@@ -21,6 +23,30 @@ public class frameAlmacen extends javax.swing.JInternalFrame
     public frameAlmacen()
     {
         initComponents();
+        this.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        ((javax.swing.plaf.basic.BasicInternalFrameUI) this.getUI()).setNorthPane(null);
+
+        txtClave.getDocument().addDocumentListener(new javax.swing.event.DocumentListener()
+        {
+            @Override
+            public void insertUpdate(DocumentEvent e)
+            {
+                filtrarProductos();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e)
+            {
+                filtrarProductos();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e)
+            {
+                filtrarProductos();
+            }
+
+        });
     }
 
     /**
@@ -34,59 +60,88 @@ public class frameAlmacen extends javax.swing.JInternalFrame
     {
 
         jTabbedPane1 = new javax.swing.JTabbedPane();
-        jPanel1 = new javax.swing.JPanel();
+        panelConsulta = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
-        jButton2 = new javax.swing.JButton();
+        eliminarPro = new javax.swing.JButton();
         txtClave = new javax.swing.JTextField();
-        jButton5 = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tableAlmacen = new javax.swing.JTable();
         jLabel8 = new javax.swing.JLabel();
-        jPanel2 = new javax.swing.JPanel();
+        panelRegistros = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
+        registroPro = new javax.swing.JButton();
         txtPrecio = new javax.swing.JTextField();
         txtClaveReg = new javax.swing.JTextField();
         txtRegistro = new javax.swing.JTextField();
         txtPrecauciones = new javax.swing.JTextField();
+        jLabel13 = new javax.swing.JLabel();
+        txtCant_almacen = new javax.swing.JTextField();
         txtEfectos = new javax.swing.JTextField();
         jLabel7 = new javax.swing.JLabel();
         jLabel12 = new javax.swing.JLabel();
-        jLabel13 = new javax.swing.JLabel();
         txtNombre = new javax.swing.JTextField();
         jLabel14 = new javax.swing.JLabel();
         txtAdministracion = new javax.swing.JTextField();
-        jDateChooser1 = new com.toedter.calendar.JDateChooser();
-        jButton3 = new javax.swing.JButton();
+        dateVencimiento = new com.toedter.calendar.JDateChooser();
+        jLabel10 = new javax.swing.JLabel();
+        txtDescuento = new javax.swing.JTextField();
+        modificarPro = new javax.swing.JButton();
+        limpiarPPro = new javax.swing.JButton();
         jLabel9 = new javax.swing.JLabel();
 
         setBorder(null);
         setTitle("Almacen");
         setPreferredSize(new java.awt.Dimension(700, 550));
+        addInternalFrameListener(new javax.swing.event.InternalFrameListener()
+        {
+            public void internalFrameActivated(javax.swing.event.InternalFrameEvent evt)
+            {
+            }
+            public void internalFrameClosed(javax.swing.event.InternalFrameEvent evt)
+            {
+            }
+            public void internalFrameClosing(javax.swing.event.InternalFrameEvent evt)
+            {
+            }
+            public void internalFrameDeactivated(javax.swing.event.InternalFrameEvent evt)
+            {
+            }
+            public void internalFrameDeiconified(javax.swing.event.InternalFrameEvent evt)
+            {
+            }
+            public void internalFrameIconified(javax.swing.event.InternalFrameEvent evt)
+            {
+            }
+            public void internalFrameOpened(javax.swing.event.InternalFrameEvent evt)
+            {
+                formInternalFrameOpened(evt);
+            }
+        });
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jPanel1.setMinimumSize(new java.awt.Dimension(680, 530));
-        jPanel1.setPreferredSize(new java.awt.Dimension(680, 530));
-        jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        panelConsulta.setMinimumSize(new java.awt.Dimension(680, 530));
+        panelConsulta.setPreferredSize(new java.awt.Dimension(680, 530));
+        panelConsulta.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jLabel6.setFont(new java.awt.Font("Georgia", 0, 18)); // NOI18N
-        jLabel6.setText("Clave:");
-        jPanel1.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 30, -1, -1));
+        jLabel6.setText("Nombre:");
+        panelConsulta.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 30, -1, -1));
 
-        jButton2.setFont(new java.awt.Font("Georgia", 0, 18)); // NOI18N
-        jButton2.setText("Detalles");
-        jButton2.addActionListener(new java.awt.event.ActionListener()
+        eliminarPro.setBackground(new java.awt.Color(204, 0, 0));
+        eliminarPro.setFont(new java.awt.Font("Georgia", 0, 18)); // NOI18N
+        eliminarPro.setText("Eliminar");
+        eliminarPro.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
             {
-                jButton2ActionPerformed(evt);
+                eliminarProActionPerformed(evt);
             }
         });
-        jPanel1.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 400, -1, -1));
+        panelConsulta.add(eliminarPro, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 400, -1, -1));
 
         txtClave.setFont(new java.awt.Font("Georgia", 0, 16)); // NOI18N
         txtClave.addActionListener(new java.awt.event.ActionListener()
@@ -96,75 +151,75 @@ public class frameAlmacen extends javax.swing.JInternalFrame
                 txtClaveActionPerformed(evt);
             }
         });
-        jPanel1.add(txtClave, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 30, 370, 28));
+        panelConsulta.add(txtClave, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 30, 370, 28));
 
-        jButton5.setBackground(new java.awt.Color(51, 255, 51));
-        jButton5.setFont(new java.awt.Font("Georgia", 0, 18)); // NOI18N
-        jButton5.setText("Buscar");
-        jButton5.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                jButton5ActionPerformed(evt);
-            }
-        });
-        jPanel1.add(jButton5, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 30, -1, -1));
-
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tableAlmacen.setFont(new java.awt.Font("Georgia", 0, 14)); // NOI18N
+        tableAlmacen.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][]
             {
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null}
+                {null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null}
             },
             new String []
             {
-                "Nombre", "Fabricante", "Fecha de vencimiento", "No. Registro sanitario", "Vía de administración", "Precio"
+                "Clave", "Nombre", "Fecha de vencimiento", "Vía de administración", "No. Registro sanitario", "Efectos Secundarios", "Advertencias", "Stock", "Precio", "Descuento"
             }
-        ));
-        jScrollPane1.setViewportView(jTable1);
+        )
+        {
+            boolean[] canEdit = new boolean []
+            {
+                false, false, false, false, false, false, false, false, false, false
+            };
 
-        jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 70, 660, 320));
+            public boolean isCellEditable(int rowIndex, int columnIndex)
+            {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane1.setViewportView(tableAlmacen);
+
+        panelConsulta.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 70, 660, 320));
 
         jLabel8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/Fondo.png"))); // NOI18N
-        jPanel1.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 700, 530));
+        panelConsulta.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 700, 530));
 
-        jTabbedPane1.addTab("Consulta", jPanel1);
+        jTabbedPane1.addTab("Consulta de productos", panelConsulta);
 
-        jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        panelRegistros.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jLabel1.setFont(new java.awt.Font("Georgia", 0, 18)); // NOI18N
         jLabel1.setText("Clave:");
-        jPanel2.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 60, -1, -1));
+        panelRegistros.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 40, -1, -1));
 
         jLabel2.setFont(new java.awt.Font("Georgia", 0, 18)); // NOI18N
         jLabel2.setText("Precauciones y advertencias:");
-        jPanel2.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 230, -1, -1));
+        panelRegistros.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 250, -1, 20));
 
         jLabel3.setFont(new java.awt.Font("Georgia", 0, 18)); // NOI18N
         jLabel3.setText("Precio:");
-        jPanel2.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 50, -1, -1));
+        panelRegistros.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 180, -1, -1));
 
         jLabel4.setFont(new java.awt.Font("Georgia", 0, 18)); // NOI18N
         jLabel4.setText("Fecha de vencimiento:");
-        jPanel2.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 150, -1, 20));
+        panelRegistros.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 40, -1, 20));
 
         jLabel5.setFont(new java.awt.Font("Georgia", 0, 18)); // NOI18N
         jLabel5.setText("Vía de administración:");
-        jPanel2.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 150, -1, 20));
+        panelRegistros.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 250, -1, -1));
 
-        jButton1.setBackground(new java.awt.Color(51, 255, 51));
-        jButton1.setFont(new java.awt.Font("Georgia", 0, 18)); // NOI18N
-        jButton1.setText("Registrar");
-        jButton1.addActionListener(new java.awt.event.ActionListener()
+        registroPro.setBackground(new java.awt.Color(51, 255, 51));
+        registroPro.setFont(new java.awt.Font("Georgia", 0, 18)); // NOI18N
+        registroPro.setText("Registrar");
+        registroPro.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
             {
-                jButton1ActionPerformed(evt);
+                registroProActionPerformed(evt);
             }
         });
-        jPanel2.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 410, -1, -1));
+        panelRegistros.add(registroPro, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 420, 120, -1));
 
         txtPrecio.setFont(new java.awt.Font("Georgia", 0, 16)); // NOI18N
         txtPrecio.addActionListener(new java.awt.event.ActionListener()
@@ -174,7 +229,7 @@ public class frameAlmacen extends javax.swing.JInternalFrame
                 txtPrecioActionPerformed(evt);
             }
         });
-        jPanel2.add(txtPrecio, new org.netbeans.lib.awtextra.AbsoluteConstraints(510, 80, 150, 28));
+        panelRegistros.add(txtPrecio, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 200, 230, 40));
 
         txtClaveReg.setFont(new java.awt.Font("Georgia", 0, 16)); // NOI18N
         txtClaveReg.addActionListener(new java.awt.event.ActionListener()
@@ -184,7 +239,7 @@ public class frameAlmacen extends javax.swing.JInternalFrame
                 txtClaveRegActionPerformed(evt);
             }
         });
-        jPanel2.add(txtClaveReg, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 80, 150, 28));
+        panelRegistros.add(txtClaveReg, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 60, 230, 40));
 
         txtRegistro.setFont(new java.awt.Font("Georgia", 0, 16)); // NOI18N
         txtRegistro.addActionListener(new java.awt.event.ActionListener()
@@ -194,7 +249,7 @@ public class frameAlmacen extends javax.swing.JInternalFrame
                 txtRegistroActionPerformed(evt);
             }
         });
-        jPanel2.add(txtRegistro, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 170, 180, 30));
+        panelRegistros.add(txtRegistro, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 130, 230, 40));
 
         txtPrecauciones.setFont(new java.awt.Font("Georgia", 0, 16)); // NOI18N
         txtPrecauciones.addActionListener(new java.awt.event.ActionListener()
@@ -204,7 +259,21 @@ public class frameAlmacen extends javax.swing.JInternalFrame
                 txtPrecaucionesActionPerformed(evt);
             }
         });
-        jPanel2.add(txtPrecauciones, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 250, 260, 110));
+        panelRegistros.add(txtPrecauciones, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 270, 230, 40));
+
+        jLabel13.setFont(new java.awt.Font("Georgia", 0, 18)); // NOI18N
+        jLabel13.setText("Cantidad almaccenada:");
+        panelRegistros.add(jLabel13, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 320, -1, -1));
+
+        txtCant_almacen.setFont(new java.awt.Font("Georgia", 0, 16)); // NOI18N
+        txtCant_almacen.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                txtCant_almacenActionPerformed(evt);
+            }
+        });
+        panelRegistros.add(txtCant_almacen, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 340, 230, 40));
 
         txtEfectos.setFont(new java.awt.Font("Georgia", 0, 16)); // NOI18N
         txtEfectos.addActionListener(new java.awt.event.ActionListener()
@@ -214,19 +283,15 @@ public class frameAlmacen extends javax.swing.JInternalFrame
                 txtEfectosActionPerformed(evt);
             }
         });
-        jPanel2.add(txtEfectos, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 250, 260, 110));
+        panelRegistros.add(txtEfectos, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 340, 230, 40));
 
         jLabel7.setFont(new java.awt.Font("Georgia", 0, 18)); // NOI18N
         jLabel7.setText("Nombre:");
-        jPanel2.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 50, -1, -1));
+        panelRegistros.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 110, -1, -1));
 
         jLabel12.setFont(new java.awt.Font("Georgia", 0, 18)); // NOI18N
         jLabel12.setText("Efectos secundarios:");
-        jPanel2.add(jLabel12, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 230, -1, -1));
-
-        jLabel13.setFont(new java.awt.Font("Georgia", 0, 18)); // NOI18N
-        jLabel13.setText("registro sanitario:");
-        jPanel2.add(jLabel13, new org.netbeans.lib.awtextra.AbsoluteConstraints(500, 150, -1, 20));
+        panelRegistros.add(jLabel12, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 320, -1, -1));
 
         txtNombre.setFont(new java.awt.Font("Georgia", 0, 16)); // NOI18N
         txtNombre.addActionListener(new java.awt.event.ActionListener()
@@ -236,11 +301,11 @@ public class frameAlmacen extends javax.swing.JInternalFrame
                 txtNombreActionPerformed(evt);
             }
         });
-        jPanel2.add(txtNombre, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 80, 190, 28));
+        panelRegistros.add(txtNombre, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 130, 230, 40));
 
         jLabel14.setFont(new java.awt.Font("Georgia", 0, 18)); // NOI18N
-        jLabel14.setText("Número de");
-        jPanel2.add(jLabel14, new org.netbeans.lib.awtextra.AbsoluteConstraints(520, 130, -1, 20));
+        jLabel14.setText("Número de registro sanitario:");
+        panelRegistros.add(jLabel14, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 110, -1, 20));
 
         txtAdministracion.setFont(new java.awt.Font("Georgia", 0, 16)); // NOI18N
         txtAdministracion.addActionListener(new java.awt.event.ActionListener()
@@ -250,27 +315,53 @@ public class frameAlmacen extends javax.swing.JInternalFrame
                 txtAdministracionActionPerformed(evt);
             }
         });
-        jPanel2.add(txtAdministracion, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 170, 190, 30));
-        jPanel2.add(jDateChooser1, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 170, 190, 30));
+        panelRegistros.add(txtAdministracion, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 270, 230, 40));
+        panelRegistros.add(dateVencimiento, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 60, 230, 40));
 
-        jButton3.setBackground(new java.awt.Color(255, 0, 0));
-        jButton3.setFont(new java.awt.Font("Georgia", 0, 18)); // NOI18N
-        jButton3.setText("Limpiar");
-        jButton3.addActionListener(new java.awt.event.ActionListener()
+        jLabel10.setFont(new java.awt.Font("Georgia", 0, 18)); // NOI18N
+        jLabel10.setText("Descuento:");
+        panelRegistros.add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 180, -1, -1));
+
+        txtDescuento.setFont(new java.awt.Font("Georgia", 0, 16)); // NOI18N
+        txtDescuento.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
             {
-                jButton3ActionPerformed(evt);
+                txtDescuentoActionPerformed(evt);
             }
         });
-        jPanel2.add(jButton3, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 410, -1, -1));
+        panelRegistros.add(txtDescuento, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 200, 230, 40));
+
+        modificarPro.setBackground(new java.awt.Color(51, 255, 51));
+        modificarPro.setFont(new java.awt.Font("Georgia", 0, 18)); // NOI18N
+        modificarPro.setText("Modificar");
+        modificarPro.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                modificarProActionPerformed(evt);
+            }
+        });
+        panelRegistros.add(modificarPro, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 420, 120, -1));
+
+        limpiarPPro.setBackground(new java.awt.Color(255, 0, 0));
+        limpiarPPro.setFont(new java.awt.Font("Georgia", 0, 18)); // NOI18N
+        limpiarPPro.setText("Limpiar");
+        limpiarPPro.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                limpiarPProActionPerformed(evt);
+            }
+        });
+        panelRegistros.add(limpiarPPro, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 420, 110, -1));
 
         jLabel9.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/Fondo.png"))); // NOI18N
-        jPanel2.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 700, 530));
+        panelRegistros.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 700, 530));
 
-        jTabbedPane1.addTab("Registro", jPanel2);
+        jTabbedPane1.addTab("Registro y modificación de productos", panelRegistros);
 
-        getContentPane().add(jTabbedPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(-4, 0, 700, 550));
+        getContentPane().add(jTabbedPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(-4, 0, 710, 550));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -300,66 +391,109 @@ public class frameAlmacen extends javax.swing.JInternalFrame
         // TODO add your handling code here:
     }//GEN-LAST:event_txtEfectosActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton1ActionPerformed
-    {//GEN-HEADEREND:event_jButton1ActionPerformed
+    private void registroProActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_registroProActionPerformed
+    {//GEN-HEADEREND:event_registroProActionPerformed
+
         String clave = txtClaveReg.getText();
         String nombre = txtNombre.getText();
-        String precio = txtPrecio.getText();
-//        String fecha = txtFecha.getText();
+        String cant_alm = txtCant_almacen.getText();
+        String precioStr = txtPrecio.getText();
         String administracion = txtAdministracion.getText();
         String registro = txtRegistro.getText();
-        String efectos = txtEfectos.getText();        
-        String precauciones = txtPrecauciones.getText();        
-        
-        String expClave = "[0-9]{5,20}";
-        String expNombre = "[a-zA-z]{10,50}";
-        String expPrecio = "$[0-9]*";
-        String expFecha = "^(0?[1-9]|[12][0-9]|30)-(0?[1-9]|1[012])-((20)\\d{2})$";
-        String expAdministracion = "[a-zA-Z]*";
-        String expRegistro = "[0-9]{1,6}";
-        String expEfectos = "[a-zA-z]{10,100}";        
-        String expPrecauciones = "[a-zA-z]{10,50}";        
-        
-        Pattern patClave = Pattern.compile(expClave);
-        Pattern patNombre = Pattern.compile(expNombre);
-        Pattern patPrecio = Pattern.compile(expPrecio);
-        Pattern patFecha = Pattern.compile(expFecha);
-        Pattern patAdministracion = Pattern.compile(expAdministracion);
-        Pattern patRegistro = Pattern.compile(expRegistro);
-        Pattern patEfectos = Pattern.compile(expEfectos);
-        Pattern patPrecauciones = Pattern.compile(expPrecauciones);
-        
-        Matcher matchClave = patClave.matcher(clave);
-        Matcher matchNombre = patNombre.matcher(nombre);
-        Matcher matchPrecio = patPrecio.matcher(precio);
-//        Matcher matchFecha = patFecha.matcher(fecha);
-        Matcher matchAdministracion = patAdministracion.matcher(administracion);
-        Matcher matchRegistro = patRegistro.matcher(registro);
-        Matcher matchEfectos = patEfectos.matcher(efectos);
-        Matcher matchPrecauciones = patPrecauciones.matcher(precauciones);
-        
-        boolean validaClave = matchClave.matches();
-        boolean validaNombre = matchNombre.matches();
-        boolean validaPrecio = matchPrecio.matches();
-//        boolean validaFecha = matchFecha.matches();
-        boolean validaAdministracion = matchAdministracion.matches();
-        boolean validaRegistro = matchRegistro.matches();
-        boolean validaEfectos = matchEfectos.matches();
-        boolean validaPrecauciones = matchPrecauciones.matches();
-        
-        if (!validaClave && !validaNombre && !validaPrecio && /*!validaFecha &&*/ !validaAdministracion && !validaRegistro && !validaEfectos && !validaPrecauciones)
-        {
-            JOptionPane.showMessageDialog(frameAlmacen.this, "Hay campos vacios o incorrectos", "Faltan datos", JOptionPane.WARNING_MESSAGE);
-        } else
-        {
-            JOptionPane.showMessageDialog(frameAlmacen.this, "Agregando Producto...", "Registrar", JOptionPane.INFORMATION_MESSAGE);
-        }        
-    }//GEN-LAST:event_jButton1ActionPerformed
+        String efectos = txtEfectos.getText();
+        String precauciones = txtPrecauciones.getText();
+        String descuento = txtDescuento.getText();
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton2ActionPerformed
-    {//GEN-HEADEREND:event_jButton2ActionPerformed
-        JOptionPane.showMessageDialog(frameAlmacen.this, "Obteniendo mas detalles...", "Detalles", JOptionPane.INFORMATION_MESSAGE);
-    }//GEN-LAST:event_jButton2ActionPerformed
+        // Validaciones con expresiones regulares (puedes ajustarlas si alguna no es adecuada)
+        String expClave = "[0-9]{1,20}";
+        String expNombre = "[a-zA-Z\\s]{3,50}";
+        String expPrecio = "[0-9]+(\\.[0-9]{1,2})?";
+        String expAdministracion = "[a-zA-Z\\s]*";
+        String expRegistro = "[0-9]{1,6}";
+        String expEfectos = ".{5,100}";
+        String expPrecauciones = ".{5,100}";
+
+        Date fechaUtil = dateVencimiento.getDate();
+        if (fechaUtil == null)
+        {
+            JOptionPane.showMessageDialog(frameAlmacen.this, "Por favor, selecciona una fecha válida.", "Fecha requerida", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        boolean valido = clave.matches(expClave)
+                && nombre.matches(expNombre)
+                && precioStr.matches(expPrecio)
+                && administracion.matches(expAdministracion)
+                && registro.matches(expRegistro)
+                && efectos.matches(expEfectos)
+                && precauciones.matches(expPrecauciones);
+
+        if (!valido)
+        {
+            JOptionPane.showMessageDialog(frameAlmacen.this, "Hay campos vacíos o con formato incorrecto.", "Error de validación", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        try
+        {
+            int claveInt = Integer.parseInt(clave);
+            double precio = Double.parseDouble(precioStr);
+            int cant_alma = Integer.parseInt(cant_alm);
+            int desc = Integer.parseInt(descuento);
+            java.sql.Date fecha = new java.sql.Date(fechaUtil.getTime());
+            
+            Producto producto = new Producto();
+            producto.setClave(claveInt);
+            producto.setNombre(nombre);
+            producto.setFecha_vencimiento(fecha);
+            producto.setVia_admin(administracion);
+            producto.setReg_sanitario(registro);
+            producto.setEfectos_sec(efectos);
+            producto.setAdvertencia(precauciones);
+            producto.setCant_almacen(cant_alma);
+            producto.setPrecio(precio);
+            producto.setDescuento(desc);
+
+            boolean exito = ProductoDAO.insertarProducto(producto);
+            if (exito)
+            {
+                JOptionPane.showMessageDialog(frameAlmacen.this, "Producto registrado con éxito.", "Registro exitoso", JOptionPane.INFORMATION_MESSAGE);
+                limpiarForm();
+                llenarTablaAlmacen();
+            } else
+            {
+                JOptionPane.showMessageDialog(frameAlmacen.this, "No se pudo registrar el producto.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (Exception ex)
+        {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(frameAlmacen.this, "Error al procesar los datos del producto.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+
+    }//GEN-LAST:event_registroProActionPerformed
+
+    private void eliminarProActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_eliminarProActionPerformed
+    {//GEN-HEADEREND:event_eliminarProActionPerformed
+        int filaSeleccionada = tableAlmacen.getSelectedRow();
+        
+        if (filaSeleccionada == -1)
+        {
+            JOptionPane.showMessageDialog(this, "Selecciona un producto a eliminar.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        int confirmacion = JOptionPane.showConfirmDialog(this, "¿Estás seguro de eliminar este producto?", "Confirmar eliminación", JOptionPane.YES_NO_OPTION);
+        if (confirmacion != JOptionPane.YES_OPTION)
+        {
+            return;
+        }
+        
+        int idProducto = Integer.parseInt(tableAlmacen.getValueAt(filaSeleccionada, 0).toString());
+        
+        ProductoDAO productoDAO = new ProductoDAO();
+        productoDAO.eliminarProducto(idProducto);
+        llenarTablaAlmacen();
+    }//GEN-LAST:event_eliminarProActionPerformed
 
     private void txtClaveActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_txtClaveActionPerformed
     {//GEN-HEADEREND:event_txtClaveActionPerformed
@@ -376,45 +510,159 @@ public class frameAlmacen extends javax.swing.JInternalFrame
         // TODO add your handling code here:
     }//GEN-LAST:event_txtAdministracionActionPerformed
 
-    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton5ActionPerformed
-    {//GEN-HEADEREND:event_jButton5ActionPerformed
-        if (txtClave.getText().trim().isEmpty())
+    private void limpiarPProActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_limpiarPProActionPerformed
+    {//GEN-HEADEREND:event_limpiarPProActionPerformed
+        limpiarForm();
+    }//GEN-LAST:event_limpiarPProActionPerformed
+
+    private void modificarProActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_modificarProActionPerformed
+    {//GEN-HEADEREND:event_modificarProActionPerformed
+        String claveSt = txtClaveReg.getText().trim();
+        String cant_almSt = txtCant_almacen.getText().trim();
+        String descuentoSt = txtDescuento.getText().trim();
+        String precioSt = txtPrecio.getText().trim();
+        
+        if (claveSt.isEmpty() || cant_almSt.isEmpty() || descuentoSt.isEmpty() || precioSt.isEmpty())
         {
-            JOptionPane.showMessageDialog(frameAlmacen.this, "Ingrese una clave", "Clave vacia", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Por favor llena los datos correspondientes", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            return ;
+        }
+        
+        Date fechaUtil = dateVencimiento.getDate();
+        
+        if (fechaUtil == null)
+        {
+            JOptionPane.showMessageDialog(frameAlmacen.this, "Por favor, selecciona una fecha válida.", "Fecha requerida", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        int confirmacion = JOptionPane.showConfirmDialog(this,
+                "¿Estás seguro de modificar este producto?", "Confirmar",
+                JOptionPane.YES_NO_OPTION);
+        if (confirmacion != JOptionPane.YES_OPTION)
+        {
+            return;
+        }
+        
+        int claveInt = Integer.parseInt(claveSt);
+        int cant_almInt = Integer.parseInt(cant_almSt);
+        int descuentoInt = Integer.parseInt(descuentoSt);
+        double precioDo = Double.parseDouble(precioSt);
+        java.sql.Date fecha = new java.sql.Date(fechaUtil.getTime());
+        
+        Producto producto = new Producto();
+        
+        producto.setClave(claveInt);
+        producto.setCant_almacen(cant_almInt);
+        producto.setDescuento(descuentoInt);
+        producto.setPrecio(precioDo);
+        producto.setFecha_vencimiento(fecha);
+        
+        ProductoDAO productoDAO = new ProductoDAO();
+        if (productoDAO.actualizarProducto(producto))
+        {
+            JOptionPane.showMessageDialog(this, "Producto actualizado correctamente.");
+            limpiarForm(); 
+            llenarTablaAlmacen();
         } else
         {
-            String clave = txtClave.getText();
-            
-            String exRClave = "[0-9]{5,20}";
-            
-            Pattern pattClave = Pattern.compile(exRClave);
-            Matcher matchClave = pattClave.matcher(clave);
-            
-            boolean valClave = matchClave.matches();
-            
-            if (!valClave)
+            JOptionPane.showMessageDialog(this, "Error al actualizar el producto.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_modificarProActionPerformed
+
+    private void txtDescuentoActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_txtDescuentoActionPerformed
+    {//GEN-HEADEREND:event_txtDescuentoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtDescuentoActionPerformed
+
+    private void txtCant_almacenActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_txtCant_almacenActionPerformed
+    {//GEN-HEADEREND:event_txtCant_almacenActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtCant_almacenActionPerformed
+
+    private void formInternalFrameOpened(javax.swing.event.InternalFrameEvent evt)//GEN-FIRST:event_formInternalFrameOpened
+    {//GEN-HEADEREND:event_formInternalFrameOpened
+        llenarTablaAlmacen();
+    }//GEN-LAST:event_formInternalFrameOpened
+
+    public void limpiarForm()
+    {
+        txtAdministracion.setText("");
+        txtCant_almacen.setText("");
+        txtClaveReg.setText("");
+        txtDescuento.setText("");
+        txtEfectos.setText("");
+        txtNombre.setText("");
+        txtPrecauciones.setText("");
+        txtPrecio.setText("");
+        txtRegistro.setText("");
+        dateVencimiento.setDate(null);
+    }
+    
+    public void filtrarProductos()
+    {
+        String textoBusqueda = txtClave.getText().trim().toLowerCase();
+        DefaultTableModel modeloTabla = (DefaultTableModel) tableAlmacen.getModel();
+
+        modeloTabla.setRowCount(0);
+
+        ProductoDAO productoDAO = new ProductoDAO();
+
+        List<Producto> productos = productoDAO.obtenerProducto();
+
+        for (Producto producto : productos)
+        {
+            if (producto.getNombre().toLowerCase().contains(textoBusqueda))
             {
-                JOptionPane.showMessageDialog(frameAlmacen.this, "La clave ingresada es incorrecta", "Clave incorrecta", JOptionPane.WARNING_MESSAGE);
-            } else
-            {
-                JOptionPane.showMessageDialog(frameAlmacen.this, "Buscando...", "Procesando Busqueda", JOptionPane.INFORMATION_MESSAGE);
+                Object[] fila =
+                {
+                    producto.getClave(),
+                    producto.getNombre(),
+                    producto.getFecha_vencimiento(),
+                    producto.getVia_admin(),
+                    producto.getReg_sanitario(),
+                    producto.getEfectos_sec(),
+                    producto.getAdvertencia(),
+                    producto.getCant_almacen(),
+                    producto.getPrecio(),
+                    producto.getDescuento(),
+                };
+                modeloTabla.addRow(fila);
             }
         }
-    }//GEN-LAST:event_jButton5ActionPerformed
+    }
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton3ActionPerformed
-    {//GEN-HEADEREND:event_jButton3ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton3ActionPerformed
+    private void llenarTablaAlmacen()
+    {
+        DefaultTableModel modelo = (DefaultTableModel) tableAlmacen.getModel();
+        modelo.setRowCount(0);
 
+        List<Producto> productos = ProductoDAO.listarProducto();
+
+        for (Producto producto : productos)
+        {
+            Object[] fila =
+            {
+                producto.getClave(),
+                producto.getNombre(),
+                producto.getFecha_vencimiento(),
+                producto.getVia_admin(),
+                producto.getReg_sanitario(),
+                producto.getEfectos_sec(),
+                producto.getAdvertencia(),
+                producto.getCant_almacen(),
+                producto.getPrecio(),
+                producto.getDescuento(),
+            };
+            modelo.addRow(fila);
+        }
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton5;
-    private com.toedter.calendar.JDateChooser jDateChooser1;
+    private com.toedter.calendar.JDateChooser dateVencimiento;
+    private javax.swing.JButton eliminarPro;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
@@ -426,14 +674,19 @@ public class frameAlmacen extends javax.swing.JInternalFrame
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JTable jTable1;
+    private javax.swing.JButton limpiarPPro;
+    private javax.swing.JButton modificarPro;
+    private javax.swing.JPanel panelConsulta;
+    private javax.swing.JPanel panelRegistros;
+    private javax.swing.JButton registroPro;
+    private javax.swing.JTable tableAlmacen;
     private javax.swing.JTextField txtAdministracion;
+    private javax.swing.JTextField txtCant_almacen;
     private javax.swing.JTextField txtClave;
     private javax.swing.JTextField txtClaveReg;
+    private javax.swing.JTextField txtDescuento;
     private javax.swing.JTextField txtEfectos;
     private javax.swing.JTextField txtNombre;
     private javax.swing.JTextField txtPrecauciones;

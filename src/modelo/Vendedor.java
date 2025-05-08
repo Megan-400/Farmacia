@@ -18,6 +18,16 @@ public class Vendedor
     {
     }
 
+    /**
+     * Constructor funcional para la alta de empleados.
+     * @param id_vendedor
+     * @param nombre
+     * @param domicilio
+     * @param usuario
+     * @param contrasenia
+     * @param telefono
+     * @param puesto 
+     */
     public Vendedor(int id_vendedor, String nombre, String domicilio, String usuario, String contrasenia, String telefono, int puesto)
     {
         this.id_vendedor = id_vendedor;

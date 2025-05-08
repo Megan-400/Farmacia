@@ -8,7 +8,9 @@ import java.util.Date;
  */
 public class Producto
 {
+
     private int id_producto;
+    private int clave;
     private String nombre;
     private Date fecha_vencimiento;
     private String via_admin;
@@ -16,14 +18,32 @@ public class Producto
     private String efectos_sec;
     private String advertencia;
     private int cant_almacen;
+    private double precio;
+    private int descuento;
 
     public Producto()
     {
     }
 
-    public Producto(int id_producto, String nombre, Date fecha_vencimiento, String via_admin, String reg_sanitario, String efectos_sec, String advertencia, int cant_almacen)
+    /**
+     * Constructor para la alta de productos.
+     *
+     * @param id_producto
+     * @param clave
+     * @param nombre
+     * @param fecha_vencimiento
+     * @param via_admin
+     * @param reg_sanitario
+     * @param efectos_sec
+     * @param advertencia
+     * @param cant_almacen
+     * @param precio
+     * @param descuento
+     */
+    public Producto(int id_producto, int clave, String nombre, Date fecha_vencimiento, String via_admin, String reg_sanitario, String efectos_sec, String advertencia, int cant_almacen, double precio, int descuento)
     {
         this.id_producto = id_producto;
+        this.clave = clave;
         this.nombre = nombre;
         this.fecha_vencimiento = fecha_vencimiento;
         this.via_admin = via_admin;
@@ -31,7 +51,9 @@ public class Producto
         this.efectos_sec = efectos_sec;
         this.advertencia = advertencia;
         this.cant_almacen = cant_almacen;
-    }    
+        this.precio = precio;
+        this.descuento = descuento;
+    }
 
     /**
      * @return the id_producto
@@ -160,7 +182,53 @@ public class Producto
     {
         this.fecha_vencimiento = fecha_vencimiento;
     }
-    
-    
-    
+
+    /**
+     * @return the clave
+     */
+    public int getClave()
+    {
+        return clave;
+    }
+
+    /**
+     * @param clave the clave to set
+     */
+    public void setClave(int clave)
+    {
+        this.clave = clave;
+    }
+
+    /**
+     * @return the precio
+     */
+    public double getPrecio()
+    {
+        return precio;
+    }
+
+    /**
+     * @param precio the precio to set
+     */
+    public void setPrecio(double precio)
+    {
+        this.precio = precio;
+    }
+
+    /**
+     * @return the descuento
+     */
+    public int getDescuento()
+    {
+        return descuento;
+    }
+
+    /**
+     * @param descuento the descuento to set
+     */
+    public void setDescuento(int descuento)
+    {
+        this.descuento = descuento;
+    }
+
 }

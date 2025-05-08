@@ -1,28 +1,48 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JInternalFrame.java to edit this template
- */
 package interfaz;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import dao.VendedorDAO;
+import modelo.Vendedor;
 import javax.swing.JOptionPane;
-import static interfaz.vtnIngreso.tipoUsuario;
+import java.util.List;
+import javax.swing.event.DocumentEvent;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
  * @author Cassandra
  */
 public class frameAdmin extends javax.swing.JInternalFrame
-{
-
+{    
     /**
      * Creates new form frameAdmin
      */
     public frameAdmin()
     {
         initComponents();
+        this.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        ((javax.swing.plaf.basic.BasicInternalFrameUI) this.getUI()).setNorthPane(null);
 
+        txtClave.getDocument().addDocumentListener(new javax.swing.event.DocumentListener()
+        {
+            @Override
+            public void insertUpdate(DocumentEvent e)
+            {
+                filtrarEmpleados();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e)
+            {
+                filtrarEmpleados();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e)
+            {
+                filtrarEmpleados();
+            }
+
+        });
     }
 
     /**
@@ -38,7 +58,6 @@ public class frameAdmin extends javax.swing.JInternalFrame
         jLabel1 = new javax.swing.JLabel();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         panelRegistro = new javax.swing.JPanel();
-        jLabel2 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
@@ -46,38 +65,62 @@ public class frameAdmin extends javax.swing.JInternalFrame
         jLabel6 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
-        jRadioButton1 = new javax.swing.JRadioButton();
-        jRadioButton2 = new javax.swing.JRadioButton();
+        radButtonAdmin = new javax.swing.JRadioButton();
+        radButtonVendedor = new javax.swing.JRadioButton();
         txtNombre = new javax.swing.JTextField();
-        txtID = new javax.swing.JTextField();
         txtDomicilio = new javax.swing.JTextField();
         txtTelefono = new javax.swing.JTextField();
         passwordPrim = new javax.swing.JPasswordField();
         passwordConf = new javax.swing.JPasswordField();
         txtUsuario = new javax.swing.JTextField();
-        registrar = new javax.swing.JButton();
-        limpia = new javax.swing.JButton();
+        registrarBtn = new javax.swing.JButton();
+        modificarBtn = new javax.swing.JButton();
+        limpiaBtn = new javax.swing.JButton();
+        mostrarCB = new javax.swing.JCheckBox();
         jLabel10 = new javax.swing.JLabel();
         panelEmpleados = new javax.swing.JPanel();
         jLabel12 = new javax.swing.JLabel();
         txtClave = new javax.swing.JTextField();
-        jButton5 = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
-        jButton2 = new javax.swing.JButton();
+        tableEmpleados = new javax.swing.JTable();
+        eliminar = new javax.swing.JButton();
         jLabel11 = new javax.swing.JLabel();
 
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/Fondo.png"))); // NOI18N
 
-        setTitle("Alta de empleados");
+        setBorder(null);
+        setTitle("Empleados");
         setPreferredSize(new java.awt.Dimension(700, 550));
+        addInternalFrameListener(new javax.swing.event.InternalFrameListener()
+        {
+            public void internalFrameActivated(javax.swing.event.InternalFrameEvent evt)
+            {
+            }
+            public void internalFrameClosed(javax.swing.event.InternalFrameEvent evt)
+            {
+            }
+            public void internalFrameClosing(javax.swing.event.InternalFrameEvent evt)
+            {
+            }
+            public void internalFrameDeactivated(javax.swing.event.InternalFrameEvent evt)
+            {
+            }
+            public void internalFrameDeiconified(javax.swing.event.InternalFrameEvent evt)
+            {
+            }
+            public void internalFrameIconified(javax.swing.event.InternalFrameEvent evt)
+            {
+            }
+            public void internalFrameOpened(javax.swing.event.InternalFrameEvent evt)
+            {
+                formInternalFrameOpened(evt);
+            }
+        });
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        panelRegistro.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        jTabbedPane1.setToolTipText("");
 
-        jLabel2.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
-        jLabel2.setText("ID:");
-        panelRegistro.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 90, -1, -1));
+        panelRegistro.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jLabel5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/usuario33.png"))); // NOI18N
         panelRegistro.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 20, -1, -1));
@@ -106,30 +149,21 @@ public class frameAdmin extends javax.swing.JInternalFrame
         jLabel9.setText("Teléfono:");
         panelRegistro.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 240, -1, -1));
 
-        jRadioButton1.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
-        jRadioButton1.setText("Administrador");
-        jRadioButton1.addActionListener(new java.awt.event.ActionListener()
+        radButtonAdmin.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        radButtonAdmin.setText("Administrador");
+        radButtonAdmin.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
             {
-                jRadioButton1ActionPerformed(evt);
+                radButtonAdminActionPerformed(evt);
             }
         });
-        panelRegistro.add(jRadioButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 160, -1, -1));
+        panelRegistro.add(radButtonAdmin, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 160, -1, -1));
 
-        jRadioButton2.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
-        jRadioButton2.setText("Ventas");
-        panelRegistro.add(jRadioButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 190, -1, -1));
+        radButtonVendedor.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        radButtonVendedor.setText("Cajero");
+        panelRegistro.add(radButtonVendedor, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 190, -1, -1));
         panelRegistro.add(txtNombre, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 170, 310, 30));
-
-        txtID.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                txtIDActionPerformed(evt);
-            }
-        });
-        panelRegistro.add(txtID, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 110, 120, 30));
 
         txtDomicilio.addActionListener(new java.awt.event.ActionListener()
         {
@@ -168,33 +202,57 @@ public class frameAdmin extends javax.swing.JInternalFrame
         });
         panelRegistro.add(txtUsuario, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 290, 310, 30));
 
-        registrar.setBackground(new java.awt.Color(51, 255, 51));
-        registrar.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
-        registrar.setText("Registrar");
-        registrar.addActionListener(new java.awt.event.ActionListener()
+        registrarBtn.setBackground(new java.awt.Color(51, 255, 51));
+        registrarBtn.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        registrarBtn.setText("Registrar");
+        registrarBtn.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
             {
-                registrarActionPerformed(evt);
+                registrarBtnActionPerformed(evt);
             }
         });
-        panelRegistro.add(registrar, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 430, -1, -1));
+        panelRegistro.add(registrarBtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 360, 130, -1));
 
-        limpia.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
-        limpia.setText("Limpiar");
-        limpia.addActionListener(new java.awt.event.ActionListener()
+        modificarBtn.setBackground(new java.awt.Color(51, 255, 51));
+        modificarBtn.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        modificarBtn.setText("Modificar");
+        modificarBtn.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
             {
-                limpiaActionPerformed(evt);
+                modificarBtnActionPerformed(evt);
             }
         });
-        panelRegistro.add(limpia, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 430, -1, -1));
+        panelRegistro.add(modificarBtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 410, 130, -1));
+
+        limpiaBtn.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        limpiaBtn.setText("Limpiar");
+        limpiaBtn.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                limpiaBtnActionPerformed(evt);
+            }
+        });
+        panelRegistro.add(limpiaBtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 310, 130, -1));
+
+        mostrarCB.setText("Mostrar contraseña");
+        mostrarCB.addActionListener(new java.awt.event.ActionListener()
+        {
+            public void actionPerformed(java.awt.event.ActionEvent evt)
+            {
+                mostrarCBActionPerformed(evt);
+            }
+        });
+        panelRegistro.add(mostrarCB, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 400, -1, -1));
 
         jLabel10.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/Fondo.png"))); // NOI18N
+        jLabel10.setToolTipText("");
         panelRegistro.add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 700, 550));
+        jLabel10.getAccessibleContext().setAccessibleName("");
 
-        jTabbedPane1.addTab("Registro", panelRegistro);
+        jTabbedPane1.addTab(" Registro y modificación de empleados", panelRegistro);
 
         panelEmpleados.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
@@ -212,19 +270,8 @@ public class frameAdmin extends javax.swing.JInternalFrame
         });
         panelEmpleados.add(txtClave, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 30, 370, 28));
 
-        jButton5.setBackground(new java.awt.Color(51, 255, 51));
-        jButton5.setFont(new java.awt.Font("Georgia", 0, 18)); // NOI18N
-        jButton5.setText("Buscar");
-        jButton5.addActionListener(new java.awt.event.ActionListener()
-        {
-            public void actionPerformed(java.awt.event.ActionEvent evt)
-            {
-                jButton5ActionPerformed(evt);
-            }
-        });
-        panelEmpleados.add(jButton5, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 30, -1, -1));
-
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tableEmpleados.setFont(new java.awt.Font("Georgia", 0, 14)); // NOI18N
+        tableEmpleados.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][]
             {
                 {null, null, null, null, null, null},
@@ -248,27 +295,27 @@ public class frameAdmin extends javax.swing.JInternalFrame
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(tableEmpleados);
 
         panelEmpleados.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 70, 660, 320));
 
-        jButton2.setFont(new java.awt.Font("Georgia", 0, 18)); // NOI18N
-        jButton2.setText("Detalles");
-        jButton2.addActionListener(new java.awt.event.ActionListener()
+        eliminar.setFont(new java.awt.Font("Georgia", 0, 18)); // NOI18N
+        eliminar.setText("Eliminar");
+        eliminar.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
             {
-                jButton2ActionPerformed(evt);
+                eliminarActionPerformed(evt);
             }
         });
-        panelEmpleados.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 400, -1, -1));
+        panelEmpleados.add(eliminar, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 400, -1, -1));
 
         jLabel11.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/Fondo.png"))); // NOI18N
         panelEmpleados.add(jLabel11, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 700, 530));
 
-        jTabbedPane1.addTab("Empleados", panelEmpleados);
+        jTabbedPane1.addTab("Consulta de empleados", panelEmpleados);
 
-        getContentPane().add(jTabbedPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 700, 550));
+        getContentPane().add(jTabbedPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 710, 550));
         jTabbedPane1.getAccessibleContext().setAccessibleName("Empleados");
 
         pack();
@@ -279,81 +326,75 @@ public class frameAdmin extends javax.swing.JInternalFrame
         // TODO add your handling code here:
     }//GEN-LAST:event_txtUsuarioActionPerformed
 
-    private void registrarActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_registrarActionPerformed
-    {//GEN-HEADEREND:event_registrarActionPerformed
-        if (txtID.getText().trim().isEmpty() || txtNombre.getText().trim().isEmpty() || txtDomicilio.getText().trim().isEmpty() || txtUsuario.getText().trim().isEmpty()
-                || txtTelefono.getText().trim().isEmpty() || passwordPrim.getPassword().length == 0 || passwordConf.getPassword().length == 0
-                || (!jRadioButton1.isSelected() && !jRadioButton2.isSelected()))
+    private void registrarBtnActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_registrarBtnActionPerformed
+    {//GEN-HEADEREND:event_registrarBtnActionPerformed
+        // Validación de campos vacíos
+        if (txtNombre.getText().trim().isEmpty() || txtDomicilio.getText().trim().isEmpty()
+                || txtUsuario.getText().trim().isEmpty() || txtTelefono.getText().trim().isEmpty()
+                || passwordPrim.getPassword().length == 0 || passwordConf.getPassword().length == 0
+                || (!radButtonAdmin.isSelected() && !radButtonVendedor.isSelected()))
         {
-            String id = txtID.getText();
-            String nombre = txtNombre.getText();
-            String direccion = txtDomicilio.getText();
-            String usuario = txtUsuario.getText();
-            String telefono = txtTelefono.getText();
-            String contra = passwordPrim.getText();
-            String contraConf = passwordConf.getText();
 
-            String expID = "[0-9]{3}";
-            String expNombre = "[A-Za-z]{20,50}";
-            String expDireccion = "[a-zA-Z0-9]{100}";
-            String expUsuario = "[a-zA-Z0-9]{10}";
-            String expTelefono = "[0-9]{10}";
-            String expContra = "[0-9a-z]{6}";
-            String expContraConf = "[0-9a-z]{6}";
-
-            Pattern patID = Pattern.compile(expID);
-            Pattern patNombre = Pattern.compile(expNombre);
-            Pattern patDireccion = Pattern.compile(expDireccion);
-            Pattern patUsuario = Pattern.compile(expUsuario);
-            Pattern patTelefono = Pattern.compile(expTelefono);
-            Pattern patContra = Pattern.compile(expContra);
-            Pattern patContraConf = Pattern.compile(expContraConf);
-
-            Matcher matchID = patID.matcher(id);
-            Matcher matchNombre = patNombre.matcher(nombre);
-            Matcher matchDireccion = patDireccion.matcher(direccion);
-            Matcher matchUsuario = patUsuario.matcher(usuario);
-            Matcher matchTelefono = patTelefono.matcher(telefono);
-            Matcher matchContra = patContra.matcher(contra);
-            Matcher matchContraConf = patContraConf.matcher(contraConf);
-
-            boolean validaID = matchID.matches();
-            boolean validaNombre = matchNombre.matches();
-            boolean validaDireccion = matchDireccion.matches();
-            boolean validaUsuario = matchUsuario.matches();
-            boolean validaTelefono = matchTelefono.matches();
-            boolean validaContra = matchContra.matches();
-            boolean validaContraConf = matchContraConf.matches();
-
-            if (!validaID && !validaNombre && !validaDireccion && !validaUsuario && !validaTelefono && !validaContra && !validaContraConf)
-            {
-                JOptionPane.showMessageDialog(frameAdmin.this, "Hay campos vacios y/o están incorrectos", "Faltan datos", JOptionPane.WARNING_MESSAGE);
-            }else
-            {
-                if (jRadioButton1.isSelected() || jRadioButton2.isSelected())
-                {
-                    tipoUsuario = (jRadioButton1.isSelected()) ? 1 : 0;                                        
-                } else
-                {
-                    JOptionPane.showMessageDialog(frameAdmin.this, "Seleccione el tipo de usuario", "Faltan Tipo Usuario", JOptionPane.WARNING_MESSAGE);
-                }
-            }
-        } else
-        {
-            JOptionPane.showMessageDialog(frameAdmin.this, "Registrando...", "Registrar", JOptionPane.INFORMATION_MESSAGE);
-            limpiar();
+            JOptionPane.showMessageDialog(frameAdmin.this, "Todos los campos son obligatorios",
+                    "Faltan datos", JOptionPane.WARNING_MESSAGE);
+            return;
         }
-    }//GEN-LAST:event_registrarActionPerformed
 
-    private void limpiaActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_limpiaActionPerformed
-    {//GEN-HEADEREND:event_limpiaActionPerformed
+        // Validación de contraseñas
+        if (!String.valueOf(passwordPrim.getPassword()).equals(String.valueOf(passwordConf.getPassword())))
+        {
+            JOptionPane.showMessageDialog(frameAdmin.this, "Las contraseñas no coinciden",
+                    "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // Validación de formato de teléfono (10 dígitos)
+        if (!txtTelefono.getText().matches("\\d{10}"))
+        {
+            JOptionPane.showMessageDialog(frameAdmin.this, "El teléfono debe tener 10 dígitos",
+                    "Formato incorrecto", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        // Determinar el tipo de usuario
+        int puesto = radButtonAdmin.isSelected() ? 1 : 2; // 1=Admin, 2=Vendedor
+
+        try
+        {
+            // Crear objeto Vendedor con los datos del formulario
+            Vendedor nuevoVendedor = new Vendedor();
+            nuevoVendedor.setNombre(txtNombre.getText());
+            nuevoVendedor.setDomicilio(txtDomicilio.getText());
+            nuevoVendedor.setUsuario(txtUsuario.getText());
+            nuevoVendedor.setContrasenia(String.valueOf(passwordPrim.getPassword()));
+            nuevoVendedor.setTelefono(txtTelefono.getText());
+            nuevoVendedor.setPuesto(puesto);
+
+            // Insertar en la base de datos
+            boolean resultado = VendedorDAO.insertarVendedor(nuevoVendedor);
+
+            if (resultado)
+            {
+                JOptionPane.showMessageDialog(frameAdmin.this, "Empleado registrado con éxito",
+                        "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                limpiar();
+                llenarTablaVendedor(); // Actualizar la tabla
+            } else
+            {
+                JOptionPane.showMessageDialog(frameAdmin.this, "Error al registrar empleado",
+                        "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (Exception e)
+        {
+            JOptionPane.showMessageDialog(frameAdmin.this, "Error: " + e.getMessage(),
+                    "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_registrarBtnActionPerformed
+
+    private void limpiaBtnActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_limpiaBtnActionPerformed
+    {//GEN-HEADEREND:event_limpiaBtnActionPerformed
         limpiar();
-    }//GEN-LAST:event_limpiaActionPerformed
-
-    private void txtIDActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_txtIDActionPerformed
-    {//GEN-HEADEREND:event_txtIDActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtIDActionPerformed
+    }//GEN-LAST:event_limpiaBtnActionPerformed
 
     private void txtDomicilioActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_txtDomicilioActionPerformed
     {//GEN-HEADEREND:event_txtDomicilioActionPerformed
@@ -370,65 +411,193 @@ public class frameAdmin extends javax.swing.JInternalFrame
         // TODO add your handling code here:
     }//GEN-LAST:event_passwordConfActionPerformed
 
-    private void jRadioButton1ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jRadioButton1ActionPerformed
-    {//GEN-HEADEREND:event_jRadioButton1ActionPerformed
+    private void radButtonAdminActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_radButtonAdminActionPerformed
+    {//GEN-HEADEREND:event_radButtonAdminActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jRadioButton1ActionPerformed
+    }//GEN-LAST:event_radButtonAdminActionPerformed
 
     private void txtClaveActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_txtClaveActionPerformed
     {//GEN-HEADEREND:event_txtClaveActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtClaveActionPerformed
 
-    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton5ActionPerformed
-    {//GEN-HEADEREND:event_jButton5ActionPerformed
-        if (txtClave.getText().trim().isEmpty())
+    private void eliminarActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_eliminarActionPerformed
+    {//GEN-HEADEREND:event_eliminarActionPerformed
+        int filaSeleccionada = tableEmpleados.getSelectedRow();
+
+        if (filaSeleccionada == -1)
         {
-            JOptionPane.showMessageDialog(frameAdmin.this, "Ingrese una clave", "Clave vacia", JOptionPane.WARNING_MESSAGE);
-        } else
+            JOptionPane.showMessageDialog(frameAdmin.this, "Seleccione un empleado para eliminar",
+                    "Advertencia", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        int confirmacion = JOptionPane.showConfirmDialog(frameAdmin.this,
+                "¿Está seguro de eliminar este empleado?", "Confirmar eliminación",
+                JOptionPane.YES_NO_OPTION);
+
+        if (confirmacion == JOptionPane.YES_OPTION)
         {
-            String clave = txtClave.getText();
-
-            String exRClave = "[0-9]{5,20}";
-
-            Pattern pattClave = Pattern.compile(exRClave);
-            Matcher matchClave = pattClave.matcher(clave);
-
-            boolean valClave = matchClave.matches();
-
-            if (!valClave)
+            try
             {
-                JOptionPane.showMessageDialog(frameAdmin.this, "La clave ingresada es incorrecta", "Clave incorrecta", JOptionPane.WARNING_MESSAGE);
-            } else
+                // Obtener el ID del vendedor seleccionado
+                int idVendedor = (int) tableEmpleados.getValueAt(filaSeleccionada, 0);
+
+                // Eliminar de la base de datos
+                VendedorDAO vendedorDAO = new VendedorDAO();
+                vendedorDAO.eliminarVendedor(idVendedor);
+
+                JOptionPane.showMessageDialog(frameAdmin.this, "Empleado eliminado con éxito",
+                        "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                llenarTablaVendedor(); // Actualizar la tabla
+            } catch (Exception e)
             {
-                JOptionPane.showMessageDialog(frameAdmin.this, "Buscando...", "Procesando Busqueda", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(frameAdmin.this, "Error al eliminar empleado: " + e.getMessage(),
+                        "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
-    }//GEN-LAST:event_jButton5ActionPerformed
+    }//GEN-LAST:event_eliminarActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_jButton2ActionPerformed
-    {//GEN-HEADEREND:event_jButton2ActionPerformed
-        JOptionPane.showMessageDialog(frameAdmin.this, "Obteniendo mas detalles...", "Detalles", JOptionPane.INFORMATION_MESSAGE);
-    }//GEN-LAST:event_jButton2ActionPerformed
+    private void formInternalFrameOpened(javax.swing.event.InternalFrameEvent evt)//GEN-FIRST:event_formInternalFrameOpened
+    {//GEN-HEADEREND:event_formInternalFrameOpened
+        llenarTablaVendedor();
+    }//GEN-LAST:event_formInternalFrameOpened
+
+    private void mostrarCBActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_mostrarCBActionPerformed
+    {//GEN-HEADEREND:event_mostrarCBActionPerformed
+        if (mostrarCB.isSelected())
+        {
+            passwordPrim.setEchoChar((char) 0);
+            passwordConf.setEchoChar((char) 0);
+        } else
+        {
+            passwordPrim.setEchoChar('•');
+            passwordConf.setEchoChar('•');
+        }
+    }//GEN-LAST:event_mostrarCBActionPerformed
+
+    private void modificarBtnActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_modificarBtnActionPerformed
+    {//GEN-HEADEREND:event_modificarBtnActionPerformed
+        if (txtNombre.getText().trim().isEmpty() || txtDomicilio.getText().trim().isEmpty()
+                || txtTelefono.getText().trim().isEmpty()
+                || passwordPrim.getPassword().length == 0 || passwordConf.getPassword().length == 0
+                || (!radButtonAdmin.isSelected() && !radButtonVendedor.isSelected()))
+        {
+
+            JOptionPane.showMessageDialog(frameAdmin.this, "Todos los campos son obligatorios",
+                    "Faltan datos", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        if (!String.valueOf(passwordPrim.getPassword()).equals(String.valueOf(passwordConf.getPassword())))
+        {
+            JOptionPane.showMessageDialog(frameAdmin.this, "Las contraseñas no coinciden",
+                    "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        if (!txtTelefono.getText().matches("\\d{10}"))
+        {
+            JOptionPane.showMessageDialog(frameAdmin.this, "El teléfono debe tener 10 dígitos",
+                    "Formato incorrecto", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        int puesto = radButtonAdmin.isSelected() ? 1 : 2;       
+        String nombreE = txtNombre.getText().trim();
+        String domicilioE = txtDomicilio.getText().trim();
+        String telefonoE = txtTelefono.getText().trim();
+        String contrasenia = String.valueOf(passwordConf.getPassword());
+        
+        Vendedor vendedor = new Vendedor();
+        vendedor.setNombre(nombreE);
+        vendedor.setDomicilio(domicilioE);
+        vendedor.setTelefono(telefonoE);
+        vendedor.setContrasenia(contrasenia);
+        vendedor.setPuesto(puesto);
+        
+        VendedorDAO vendedorDAO = new VendedorDAO();
+        if (vendedorDAO.actualizarVendedor(vendedor))
+        {
+            JOptionPane.showMessageDialog(this, "Empleado actualizado correctamente.");
+            limpiar();
+            llenarTablaVendedor();
+        } else
+        {
+            JOptionPane.showMessageDialog(this, "Error al actualizar al vendedor.", "Error", JOptionPane.ERROR_MESSAGE);
+        }        
+    }//GEN-LAST:event_modificarBtnActionPerformed
+    
     private void limpiar()
     {
-        txtID.setText("");
         txtNombre.setText("");
         txtDomicilio.setText("");
         txtUsuario.setText("");
         txtTelefono.setText("");
         passwordPrim.setText("");
         passwordConf.setText("");
+        radButtonAdmin.setSelected(false);
+        radButtonVendedor.setSelected(false);
+        mostrarCB.setSelected(false);
+    }
+
+    public void filtrarEmpleados()
+    {
+        String textoBusqueda = txtClave.getText().trim().toLowerCase();
+        DefaultTableModel modeloTabla = (DefaultTableModel) tableEmpleados.getModel();
+
+        modeloTabla.setRowCount(0);
+
+        VendedorDAO vendedorDAO = new VendedorDAO();
+
+        List<Vendedor> vendedores = vendedorDAO.obtenerVendedores();
+
+        for (Vendedor vendedor : vendedores)
+        {
+            if (vendedor.getNombre().toLowerCase().contains(textoBusqueda))
+            {
+                Object[] fila =
+                {
+                    vendedor.getId_vendedor(),
+                    vendedor.getNombre(),
+                    vendedor.getDomicilio(),
+                    vendedor.getUsuario(),
+                    vendedor.getTelefono(),
+                    vendedor.getPuesto()
+                };
+                modeloTabla.addRow(fila);
+            }
+        }
+    }
+
+    private void llenarTablaVendedor()
+    {
+        DefaultTableModel modelo = (DefaultTableModel) tableEmpleados.getModel();
+        modelo.setRowCount(0);
+
+        List<Vendedor> vendedores = VendedorDAO.listarVendedor();
+
+        for (Vendedor vendedor : vendedores)
+        {
+            Object[] fila =
+            {
+                vendedor.getId_vendedor(),
+                vendedor.getNombre(),
+                vendedor.getDomicilio(),
+                vendedor.getUsuario(),
+                vendedor.getTelefono(),
+                vendedor.getPuesto()
+            };
+            modelo.addRow(fila);
+        }
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton5;
+    private javax.swing.JButton eliminar;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
@@ -436,20 +605,21 @@ public class frameAdmin extends javax.swing.JInternalFrame
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
-    private javax.swing.JRadioButton jRadioButton1;
-    private javax.swing.JRadioButton jRadioButton2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private javax.swing.JTable jTable1;
-    private javax.swing.JButton limpia;
+    private javax.swing.JButton limpiaBtn;
+    private javax.swing.JButton modificarBtn;
+    private javax.swing.JCheckBox mostrarCB;
     private javax.swing.JPanel panelEmpleados;
     private javax.swing.JPanel panelRegistro;
     private javax.swing.JPasswordField passwordConf;
     private javax.swing.JPasswordField passwordPrim;
-    private javax.swing.JButton registrar;
+    private javax.swing.JRadioButton radButtonAdmin;
+    private javax.swing.JRadioButton radButtonVendedor;
+    private javax.swing.JButton registrarBtn;
+    private javax.swing.JTable tableEmpleados;
     private javax.swing.JTextField txtClave;
     private javax.swing.JTextField txtDomicilio;
-    private javax.swing.JTextField txtID;
     private javax.swing.JTextField txtNombre;
     private javax.swing.JTextField txtTelefono;
     private javax.swing.JTextField txtUsuario;

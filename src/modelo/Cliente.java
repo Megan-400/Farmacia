@@ -23,7 +23,7 @@ public class Cliente
         this.direccion = direccion;
         this.telefono = telefono;
         this.edad = edad;
-    }
+    }       
 
     /**
      * @return the id_cliente

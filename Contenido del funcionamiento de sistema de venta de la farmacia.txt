@@ -1,0 +1,33 @@
+Administrador
+-Pantalla registro
+ Alta de empleados *
+ Modificación de empleados (Domicilio, telefono, rol) *
+-Pantalla empleados
+ Eliminar empleados *
+ Consulta empleados *
+
+Almacen
+-Pantalla consulta
+ Eliminar producto *
+ Consultar datos de productos *
+ Alertas de stock minimo de productos (Que los productos que esten en su stock minimo
+ se muestren en rojo y hasta arriba en la tabla de consulta)
+-Pantalla registro
+ Alta de productos *
+ Modificación de productos (fecha de vencimiento, cantidad en el inventario, precio, descuento) Clave*
+
+Clientes
+-Pantalla consulta
+ Eliminar clientes *
+ Consultar clientes *
+-Pantalla registro
+ Alta de clientes *
+ Modificar datos clientes (Dirección, telefono, edad)*
+
+Reportes
+ Graficas (Por vendedor, por mes, anual, por cliente)
+ Hacer reportes en PDF
+
+Ventas
+ Consulta de los productos comprados
+ 

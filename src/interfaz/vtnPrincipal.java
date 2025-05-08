@@ -1,5 +1,8 @@
 package interfaz;
 
+import conexion.Conexion;
+import modelo.Vendedor;
+
 /**
  *
  * @author Cassandra
@@ -7,21 +10,25 @@ package interfaz;
 public class vtnPrincipal extends javax.swing.JFrame
 {
 
-    /**
-     * Creates new form vtnProductos
-     */
+    private Vendedor vendedorAct;
+
     public vtnPrincipal()
     {
         initComponents();
         this.setLocationRelativeTo(null);
         this.setTitle("Principal");
-        
-//        if (vtnIngreso.tipoUsuario == 1)
-//        {
-//            btnReportes.setEnabled(false);
-//            jLabel12.setText("Ventas");
-//            altaEmp.setEnabled(false);
-//        }
+    }
+
+    /**
+     * Creates new form vtnProductos
+     */
+    public vtnPrincipal(Vendedor vendedor)
+    {
+        initComponents();
+        this.setLocationRelativeTo(null);
+        this.setTitle("Principal");
+        this.vendedorAct = vendedor;
+        nameEmp.setText(vendedor.getNombre());
     }
 
     /**
@@ -38,14 +45,21 @@ public class vtnPrincipal extends javax.swing.JFrame
         btnVentas = new javax.swing.JButton();
         btnCliente = new javax.swing.JButton();
         btnAlmacen = new javax.swing.JButton();
-        altaEmp = new javax.swing.JButton();
+        btnAdmi = new javax.swing.JButton();
         btnReportes = new javax.swing.JButton();
         desktopPaneControl = new javax.swing.JDesktopPane();
-        jLabel12 = new javax.swing.JLabel();
+        nameEmp = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
+        addWindowListener(new java.awt.event.WindowAdapter()
+        {
+            public void windowOpened(java.awt.event.WindowEvent evt)
+            {
+                formWindowOpened(evt);
+            }
+        });
 
         jPanel1.setPreferredSize(new java.awt.Dimension(930, 700));
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -83,16 +97,16 @@ public class vtnPrincipal extends javax.swing.JFrame
         });
         jPanel1.add(btnAlmacen, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 300, -1, -1));
 
-        altaEmp.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/contratacion.png"))); // NOI18N
-        altaEmp.setToolTipText("Registrar empleados.");
-        altaEmp.addActionListener(new java.awt.event.ActionListener()
+        btnAdmi.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/contratacion.png"))); // NOI18N
+        btnAdmi.setToolTipText("Registrar empleados.");
+        btnAdmi.addActionListener(new java.awt.event.ActionListener()
         {
             public void actionPerformed(java.awt.event.ActionEvent evt)
             {
-                altaEmpActionPerformed(evt);
+                btnAdmiActionPerformed(evt);
             }
         });
-        jPanel1.add(altaEmp, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 500, -1, -1));
+        jPanel1.add(btnAdmi, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 500, -1, -1));
 
         btnReportes.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/beneficio-financiero.png"))); // NOI18N
         btnReportes.setToolTipText("Reporte de ventas.");
@@ -118,11 +132,10 @@ public class vtnPrincipal extends javax.swing.JFrame
 
         jPanel1.add(desktopPaneControl, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 90, 700, 550));
 
-        jLabel12.setBackground(new java.awt.Color(0, 0, 0));
-        jLabel12.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        jLabel12.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/usuario22.png"))); // NOI18N
-        jLabel12.setText("Administrador");
-        jPanel1.add(jLabel12, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 10, -1, -1));
+        nameEmp.setBackground(new java.awt.Color(0, 0, 0));
+        nameEmp.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        nameEmp.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/usuario22.png"))); // NOI18N
+        jPanel1.add(nameEmp, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 10, -1, -1));
 
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/Fondo.png"))); // NOI18N
         jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 930, 700));
@@ -153,6 +166,7 @@ public class vtnPrincipal extends javax.swing.JFrame
     {//GEN-HEADEREND:event_btnReportesActionPerformed
         desktopPaneControl.removeAll();
         frameReportes fR = new frameReportes();
+        //FrameGraficas fR = new FrameGraficas();
         desktopPaneControl.repaint();
         desktopPaneControl.add(fR).setVisible(true);
     }//GEN-LAST:event_btnReportesActionPerformed
@@ -160,7 +174,7 @@ public class vtnPrincipal extends javax.swing.JFrame
     private void btnVentasActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnVentasActionPerformed
     {//GEN-HEADEREND:event_btnVentasActionPerformed
         desktopPaneControl.removeAll();
-        frameVentas fV = new frameVentas();
+        frameVentas fV = new frameVentas(vendedorAct);
         desktopPaneControl.add(fV).setVisible(true);
     }//GEN-LAST:event_btnVentasActionPerformed
 
@@ -171,12 +185,31 @@ public class vtnPrincipal extends javax.swing.JFrame
         desktopPaneControl.add(fC).setVisible(true);
     }//GEN-LAST:event_btnClienteActionPerformed
 
-    private void altaEmpActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_altaEmpActionPerformed
-    {//GEN-HEADEREND:event_altaEmpActionPerformed
+    private void btnAdmiActionPerformed(java.awt.event.ActionEvent evt)//GEN-FIRST:event_btnAdmiActionPerformed
+    {//GEN-HEADEREND:event_btnAdmiActionPerformed
         desktopPaneControl.removeAll();
         frameAdmin fA = new frameAdmin();
         desktopPaneControl.add(fA).setVisible(true);
-    }//GEN-LAST:event_altaEmpActionPerformed
+    }//GEN-LAST:event_btnAdmiActionPerformed
+
+    private void formWindowOpened(java.awt.event.WindowEvent evt)//GEN-FIRST:event_formWindowOpened
+    {//GEN-HEADEREND:event_formWindowOpened
+        if (vendedorAct.getPuesto() == 2)
+        {
+            btnAlmacen.setVisible(true);
+            btnCliente.setVisible(true);
+            btnVentas.setVisible(true);
+            btnReportes.setVisible(false);
+            btnAdmi.setVisible(false);
+        } else
+        {
+            btnAlmacen.setVisible(true);
+            btnCliente.setVisible(true);
+            btnVentas.setVisible(true);
+            btnReportes.setVisible(true);
+            btnAdmi.setVisible(true);
+        }
+    }//GEN-LAST:event_formWindowOpened
 
     /**
      * @param args the command line arguments
@@ -225,14 +258,14 @@ public class vtnPrincipal extends javax.swing.JFrame
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton altaEmp;
+    private javax.swing.JButton btnAdmi;
     private javax.swing.JButton btnAlmacen;
     private javax.swing.JButton btnCliente;
     private javax.swing.JButton btnReportes;
     private javax.swing.JButton btnVentas;
     private javax.swing.JDesktopPane desktopPaneControl;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel12;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JLabel nameEmp;
     // End of variables declaration//GEN-END:variables
 }
